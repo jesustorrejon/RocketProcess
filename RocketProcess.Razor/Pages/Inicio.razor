@@ -1,0 +1,15 @@
+﻿@inject NavigationManager nm
+
+<PageTitle>Portafolio Jesús Torrejón</PageTitle>
+
+<h1>Rocket Process</h1>
+<span>Endpoints de WebApi</span>
+<button class="btn btn-primary" @onclick="Navegar">Redireccioname</button>
+
+@code {
+
+    public void Navegar()
+    {
+        nm.NavigateTo("swagger", true);
+    }
+}

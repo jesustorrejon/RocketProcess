@@ -1,0 +1,69 @@
+﻿@page "/Users"
+@inject IUserServices UserServices
+@inject IDialogService DialogService
+
+@if (_usuarios is null)
+{
+    <div class="d-flex align-items-center text-center">
+        <MudProgressCircular Color="Color.Info" Indeterminate="true" />
+    </div>
+    
+}
+else{
+    <MudDataGrid T="Usuario" Items="@_usuarios" Virtualize="true" FixedHeader="true" Height="350px" 
+            ReadOnly="false">
+        <Columns>
+            <Column T="Usuario" Field="Id_Usuario" Title="#" />
+            <Column T="Usuario" Field="Nombre" />
+            <Column T="Usuario" Field="Rut" />
+            <Column T="Usuario" Field="Correo" />
+            <Column T="Usuario" CellClass="d-flex justify-end">
+            <CellTemplate>
+                    <MudIconButton Size="@Size.Small" Icon="@Icons.Outlined.Edit" OnClick="@(e => Modificar(context.Item))" />
+                    <MudIconButton Size="@Size.Small" Icon="@Icons.Material.Filled.Delete" OnClick="@(e => Eliminar(context.Item))" />
+            </CellTemplate>
+            </Column>
+        </Columns>
+    </MudDataGrid>
+}
+
+
+@code {
+    private IEnumerable<Usuario> _usuarios;
+    private List<string> _events = new();
+    DialogOptions dialog = new DialogOptions { CloseButton = false, NoHeader = true };
+
+    protected async override Task OnInitializedAsync()
+    {
+        var result = await UserServices.GetAll();
+        _usuarios = result;
+    }
+
+    private void Modificar(object xUsuario)
+    {
+        var p = new DialogParameters();
+        var options = new DialogOptions { CloseOnEscapeKey = true, DisableBackdropClick = true};
+        p.Add("usuario", xUsuario);
+        DialogService.Show<UserEdit>("",p, options);
+    }
+
+    private void Eliminar(object xUsuario)
+    {
+        var p = new DialogParameters();
+        var options = new DialogOptions { CloseOnEscapeKey = true, DisableBackdropClick = true };
+        p.Add("usuario", xUsuario);
+        DialogService.Show<UserDelete>("", p, options);
+    }
+
+    void CancelledEditingItem(Usuario item)
+    {
+        _events.Insert(0, $"Event = CancelledEditingItem, Data = {System.Text.Json.JsonSerializer.Serialize(item)}");
+    }
+
+    void CommittedItemChanges(Usuario item)
+    {
+        _events.Insert(0, $"Event = CommittedItemChanges, Data = {System.Text.Json.JsonSerializer.Serialize(item)}");
+    }
+
+    
+    }

@@ -1,0 +1,22 @@
+﻿@inherits LayoutComponentBase
+
+<link href="https://use.fontawesome.com/releases/v5.14.0/css/all.css" rel="stylesheet">
+
+<MudThemeProvider />
+<MudDialogProvider />
+<MudSnackbarProvider />
+
+<div class="page">
+    <div class="sidebar">
+        <NavMenu />
+    
+    </div>
+            
+        
+
+    <main>
+        <article class="content px-4">
+            @Body
+        </article>
+    </main>
+</div>

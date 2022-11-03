@@ -1,0 +1,89 @@
+﻿@using RocketProcess.Shared.Modelos
+@inject ILoginServices LoginServices
+@inject IUserServices UserServices
+
+<style>
+    .caja{
+        padding-top: 1em;
+        padding-bottom: 1em;
+    }
+</style>
+@if (login is null || usuario is null)
+{
+    <div class="d-flex align-items-center align-text-center">
+        <MudProgressCircular Color="Color.Info" Indeterminate="true" />
+    </div>
+}
+else{
+    <MudDialog DisableSidePadding="true">
+        <TitleContent>
+            <MudText>Editar Usuario</MudText>
+        </TitleContent>
+        <DialogContent>
+            <MudContainer Style="max-height: 60vh; overflow-y: scroll">
+                <div class="caja">
+                    <MudTextField @bind-Value="@usuario.Id_Usuario" Disabled="true" ReadOnly="true" Label="#" Variant="Variant.Outlined"></MudTextField>
+                </div>
+                <div class="caja">
+                    <MudTextField @bind-Value="@usuario.Rut" Label="RUT" Variant="Variant.Outlined"></MudTextField>
+                </div>
+                <div class="caja">
+                    <MudTextField @bind-Value="@usuario.Nombre" Label="Nombre" Variant="Variant.Outlined"></MudTextField>
+                </div>
+                <div class="caja">
+                    <MudTextField @bind-Value="@usuario.Apell_Paterno" Label="Apellido Paterno" Variant="Variant.Outlined"></MudTextField>
+                </div>
+                <div class="caja">
+                    <MudTextField @bind-Value="@usuario.Apell_Materno" Label="Apellido Materno" Variant="Variant.Outlined"></MudTextField>
+                </div>
+                <div class="caja">
+                    <MudTextField @bind-Value="@usuario.Correo" Label="Correo" Variant="Variant.Outlined"></MudTextField>
+                </div>
+                <div class="caja">
+                    <MudTextField @bind-Value="@login.rol" Label="Rol" Variant="Variant.Outlined"></MudTextField>
+                </div>
+            </MudContainer>
+        </DialogContent>
+        <DialogActions>
+            <MudButton OnClick="Cancel">Cancel</MudButton>
+            <MudButton Color="Color.Primary" OnClick="Submit">Ok</MudButton>
+        </DialogActions>
+    </MudDialog>
+}
+
+
+
+@code {
+    [CascadingParameter] MudDialogInstance MudDialog { get; set; }
+
+    [Parameter]
+    public Usuario usuario { get; set; }
+
+    private Login login { get; set; }
+    private UsuarioDetalle usuarioDetalle { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        var result = await LoginServices.LoginConnect(usuario.Correo, usuario.Clave);
+        login = result.FirstOrDefault();
+        usuarioDetalle = new UsuarioDetalle();
+    }
+
+    async void Submit(){
+        usuarioDetalle.Id_Usuario = usuario.Id_Usuario;
+        usuarioDetalle.Nombre = usuario.Nombre;
+        usuarioDetalle.Apell_Paterno = usuario.Apell_Paterno;
+        usuarioDetalle.Apell_Materno = usuario.Apell_Materno;
+        usuarioDetalle.Rut = usuario.Rut;
+        usuarioDetalle.Correo = usuario.Correo;
+        usuarioDetalle.Telefono = usuario.Telefono;
+        usuarioDetalle.Direccion = usuario.Direccion;
+        usuarioDetalle.Id_Rol = 1;
+        usuarioDetalle.Rol_Desc = login.rol;
+
+        var result = await UserServices.Guardar(usuarioDetalle);
+
+        MudDialog.Close(DialogResult.Ok(true));
+    }
+    void Cancel() => MudDialog.Cancel();
+}
