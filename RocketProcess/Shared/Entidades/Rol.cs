@@ -9,6 +9,7 @@ namespace RocketProcess.Shared.Entidades
     public class Rol
     {
         public int Id_Rol { get; set; }
-        public string Rol_Desc { get; set; }
+        public string? Nombre_Rol { get; set; }
+        public string? Descripcion { get; set; }
     }
 }

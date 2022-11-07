@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 using RocketProcess.Repositories.Interfaces;
 using RocketProcess.Shared;
 using RocketProcess.Shared.Modelos;
@@ -33,9 +34,18 @@ namespace RocketProcess.Server.Controllers
 
         [HttpPost]
         [Route("Agregar")]
-        public async Task<ActionResult<bool>> Agregar([FromBody]UsuarioDetalle xUsuario)
+        public async Task<IActionResult> Agregar([FromBody]UsuarioDetalle xUsuario)
         {
-            return await _usuariosRepositories.Guardar(xUsuario);
+            var result = await _usuariosRepositories.Guardar(xUsuario);
+            PostResponse respuesta = new PostResponse() 
+            { 
+                Success = result,
+                Error = result? "" : "Error al guardar." 
+            };
+
+            return Ok(new Response<PostResponse>(respuesta));
+            //return JsonConvert.SerializeObject(respuesta, Formatting.Indented);
+
         }
         //[HttpGet]
         //[Route("login")]

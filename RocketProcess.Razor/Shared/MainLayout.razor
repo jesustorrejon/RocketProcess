@@ -6,17 +6,42 @@
 <MudDialogProvider />
 <MudSnackbarProvider />
 
-<div class="page">
-    <div class="sidebar">
-        <NavMenu />
-    
-    </div>
-            
-        
 
-    <main>
-        <article class="content px-4">
-            @Body
-        </article>
-    </main>
+<div>
+    <MudDrawerContainer>
+        <MudAppBar Elevation="1" Dense="true" Color="Color.Dark">
+            <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" Edge="Edge.Start" OnClick="@ToggleDrawer" />
+            <MudSpacer />
+            <MudIconButton Icon="fas fa-satellite-dish" Title="Endpoints RocketProcess" Color="Color.Inherit" Edge="Edge.Start" Link="http://jesustorrejon.cl/swagger/index.html" Target="_blank" />
+            <MudSpacer />
+            <MudIconButton Icon="@Icons.Custom.Brands.GitHub" Title="Sobre mí" Color="Color.Inherit" Link="https://github.com/jesustorrejon" Target="_blank" />
+        </MudAppBar>
+        <MudDrawer Color="Color.Dark" @bind-Open="@open" Elevation="1" Breakpoint="Breakpoint.Always" ClipMode="DrawerClipMode.Always" Variant="@DrawerVariant.Persistent">
+            <MudDrawerHeader>
+                <MudText Typo="Typo.h6">Rocket Process</MudText>
+            </MudDrawerHeader>
+            <MudNavMenu>
+                <MudNavLink Href="/" Icon="fas fa-home" IconColor="Color.Default">Inicio</MudNavLink>
+                <MudNavGroup Title="Seguridad" Icon="fas fa-cogs" Expanded="true">
+                    <MudNavLink Href="/users" Icon="fas fa-users" IconColor="Color.Success">Usuarios</MudNavLink>
+                    <MudNavLink Href="/roles" Icon="fas fa-sitemap" IconColor="Color.Info">Roles</MudNavLink>
+                </MudNavGroup>
+            </MudNavMenu>
+        </MudDrawer>
+
+        <MudMainContent>
+            <MudContainer Class="mt-6">
+                @Body
+            </MudContainer>
+        </MudMainContent>
+    </MudDrawerContainer>
 </div>
+
+@code {
+    bool open = false;
+
+    void ToggleDrawer()
+    {
+        open = !open;
+    }
+                    }

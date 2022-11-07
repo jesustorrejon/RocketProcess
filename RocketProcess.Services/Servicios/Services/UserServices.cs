@@ -19,10 +19,10 @@ namespace RocketProcess.Services.Servicios.Services
             return await _httpClient.GetFromJsonAsync<IEnumerable<Usuario>>($"api/Usuarios/listar");
         }
 
-        public async Task<bool> Guardar(UsuarioDetalle xUsuario)
+        public async Task<Response<PostResponse>> Guardar(UsuarioDetalle xUsuario)
         {
             var result = await _httpClient.PostAsJsonAsync<UsuarioDetalle>($"api/Usuarios/agregar", xUsuario);
-            return result.IsSuccessStatusCode;
+            return await result.Content.ReadFromJsonAsync<Response<PostResponse>>();
         }
     }
 }

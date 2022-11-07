@@ -6,23 +6,32 @@
     }
 </style>
 
-<div class="top-row ps-3 navbar navbar-dark">
+@*<div class="top-row ps-3 navbar navbar-dark">
     <div class="container-fluid">
         <a class="navbar-brand" href=""></a>
         <button title="Navigation menu" class="navbar-toggler" @onclick="ToggleNavMenu">
             <span class="navbar-toggler-icon"></span>
         </button>
     </div>
-</div>
+</div>*@
+
+<MudAppBar Elevation="1" Dense="true">
+    <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" Edge="Edge.Start" OnClick="@ToggleDrawer" />
+    <MudSpacer />
+    <MudIconButton Icon="@Icons.Custom.Brands.GitHub" Color="Color.Inherit" Link="https://github.com/MudBlazor/MudBlazor" Target="_blank" />
+</MudAppBar>
+<MudDrawer @bind-Open="@open" Elevation="1" Breakpoint="Breakpoint.Lg" ClipMode="DrawerClipMode.Always" Variant="@DrawerVariant.Mini">
+        <MudNavMenu>
+            <MudNavLink Href="/" Icon="fas fa-home" IconColor="Color.Default">Inicio</MudNavLink>
+            <MudNavGroup Title="Seguridad" Icon="fas fa-cogs" Expanded="true">
+                <MudNavLink Href="/users" Icon="fas fa-users" IconColor="Color.Success">Usuarios</MudNavLink>
+                <MudNavLink Href="/roles" Icon="fas fa-sitemap" IconColor="Color.Info">Roles</MudNavLink>
+            </MudNavGroup>
+        </MudNavMenu>
+</MudDrawer>
 
 <div class="@NavMenuCssClass" @onclick="ToggleNavMenu">
-    <MudNavMenu Class="mud-width-full">
-        
-        <MudNavGroup Title="Seguridad" Icon="fas fa-cogs" Expanded="true">
-            <MudNavLink Href="/users" Icon="fas fa-users" IconColor="Color.Success">Usuarios</MudNavLink>
-            <MudNavLink Href="/roles" Icon="fas fa-sitemap" IconColor="Color.Info">Roles</MudNavLink>
-        </MudNavGroup>
-    </MudNavMenu>
+    
 
 </div>
 
@@ -39,5 +48,12 @@
     void NavegarRocketProcessAPI()
     {
         nm.NavigateTo("swagger", true);
+    }
+
+    bool open = false;
+
+    void ToggleDrawer()
+    {
+        open = !open;
     }
 }

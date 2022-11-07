@@ -6,6 +6,6 @@ namespace RocketProcess.Services.Servicios.Interfaces
     public interface IUserServices
     {
         Task<IEnumerable<Usuario>> GetAll();
-        Task<bool> Guardar(UsuarioDetalle xUsuario);
+        Task<Response<PostResponse>> Guardar(UsuarioDetalle xUsuario);
     }
 }

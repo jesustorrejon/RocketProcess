@@ -2,22 +2,23 @@
 @inject IUserServices UserServices
 @inject IDialogService DialogService
 
-@if (_usuarios is null)
+@*@if (Enumusuarios is null)
 {
     <div class="d-flex align-items-center text-center">
         <MudProgressCircular Color="Color.Info" Indeterminate="true" />
     </div>
     
 }
-else{
-    <MudDataGrid T="Usuario" Items="@_usuarios" Virtualize="true" FixedHeader="true" Height="350px" 
-            ReadOnly="false">
+else{*@
+    <h3 class="text-center pb-3">Usuarios</h3>
+    <MudDataGrid Outlined="true" Hover="true" T="Usuario" Items="@Enumusuarios" Virtualize="true" FixedHeader="true" Height="350px"
+             Filterable="true" FilterMode="@DataGridFilterMode.ColumnFilterRow" Loading="@(Enumusuarios is null)">
         <Columns>
-            <Column T="Usuario" Field="Id_Usuario" Title="#" />
+            <Column T="Usuario" Field="Id_Usuario" Title="#"/>
             <Column T="Usuario" Field="Nombre" />
-            <Column T="Usuario" Field="Rut" />
-            <Column T="Usuario" Field="Correo" />
-            <Column T="Usuario" CellClass="d-flex justify-end">
+            <Column Sortable="false" T="Usuario" Field="Rut" />
+            <Column Sortable="false" T="Usuario" Field="Correo" />
+            <Column Sortable="false" T="Usuario" CellClass="d-flex justify-end">
             <CellTemplate>
                     <MudIconButton Size="@Size.Small" Icon="@Icons.Outlined.Edit" OnClick="@(e => Modificar(context.Item))" />
                     <MudIconButton Size="@Size.Small" Icon="@Icons.Material.Filled.Delete" OnClick="@(e => Eliminar(context.Item))" />
@@ -25,18 +26,32 @@ else{
             </Column>
         </Columns>
     </MudDataGrid>
-}
+    <MudCardActions Class="align-items-center pt-2 row flex-row-reverse">
+        <MudButton Class="col-lg-2 col-md-2 col-sm-12 col-xs-12 ml-5 mt-2 btn btn-info" Variant="Variant.Filled" Color="Color.Info" StartIcon="fas fa-user-plus">
+            <MudText Class="pl-2">Agregar</MudText>
+        </MudButton>
+    </MudCardActions>
+@*}*@
 
 
 @code {
-    private IEnumerable<Usuario> _usuarios;
-    private List<string> _events = new();
+    private IEnumerable<Usuario> Enumusuarios = new List<Usuario>();
     DialogOptions dialog = new DialogOptions { CloseButton = false, NoHeader = true };
+
+    HashSet<Usuario> _selectedItems = new();
+    HashSet<Usuario> _filterItems = new();
+    FilterDefinition<Usuario> _filterDefinition;
 
     protected async override Task OnInitializedAsync()
     {
         var result = await UserServices.GetAll();
-        _usuarios = result;
+        _selectedItems = Enumusuarios.ToHashSet();
+        _filterItems = Enumusuarios.ToHashSet();
+        _filterDefinition = new FilterDefinition<Usuario>
+            {
+                FilterFunction = x => _filterItems.Contains(x)
+            };
+        Enumusuarios = result;
     }
 
     private void Modificar(object xUsuario)
@@ -55,15 +70,27 @@ else{
         DialogService.Show<UserDelete>("", p, options);
     }
 
-    void CancelledEditingItem(Usuario item)
+    void ApplyFilter(FilterContext<Usuario> context)
     {
-        _events.Insert(0, $"Event = CancelledEditingItem, Data = {System.Text.Json.JsonSerializer.Serialize(item)}");
+        foreach (var item in context.Items)
+        {
+            SelectedChanged(true, item);
+        }
+        _filterItems = _selectedItems.ToHashSet();
+        context.Actions.ApplyFilter(_filterDefinition);
     }
 
-    void CommittedItemChanges(Usuario item)
+    void SelectedChanged(bool value, Usuario item)
     {
-        _events.Insert(0, $"Event = CommittedItemChanges, Data = {System.Text.Json.JsonSerializer.Serialize(item)}");
+        if (value)
+            _selectedItems.Add(item);
+        else
+            _selectedItems.Remove(item);
+
+        //if (_selectedItems.Count == _usuarios.Count())
+        //    _selectAll = true;
+        //else
+        //    _selectAll = false;
     }
 
-    
-    }
+}

@@ -10,12 +10,14 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllersWithViews();
 builder.Services.AddRazorPages();
+builder.Services.AddSwaggerGen();
 
 string connString = builder.Configuration.GetConnectionString("DefaultConnection");
 builder.Services.AddSingleton<IDbConnection>((sp) => new OracleConnection(connString));
 
 builder.Services.AddScoped<IUsuariosRepositories, UsuariosRepositories>();
 builder.Services.AddScoped<ILoginRepositories, LoginRepositories>();
+builder.Services.AddScoped<IRoleRepositories, RoleRepositories>();
 
 var app = builder.Build();
 
@@ -38,6 +40,11 @@ app.UseStaticFiles();
 
 app.UseRouting();
 
+app.UseSwagger();
+app.UseSwaggerUI(c =>
+{
+    c.SwaggerEndpoint("/swagger/v1/swagger.json", "RocketProcess API V1");
+});
 
 app.MapRazorPages();
 app.MapControllers();

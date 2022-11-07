@@ -1,0 +1,78 @@
+﻿@using RocketProcess.Shared.Entidades
+@using RocketProcess.Shared.Modelos
+@inject IRoleServices RoleServices
+
+<style>
+    .caja {
+        padding-top: 1em;
+        padding-bottom: 1em;
+    }
+</style>
+@if (rol is null)
+{
+    <div class="d-flex align-items-center text-center">
+        <MudProgressCircular Color="Color.Info" Indeterminate="true" />
+    </div>
+}
+else
+{
+    <MudDialog DisableSidePadding="true">
+        <TitleContent>
+            <MudText>Editar Rol</MudText>
+        </TitleContent>
+        <DialogContent>
+            <MudContainer Style="max-height: 60vh; overflow-y: scroll">
+                <div class="caja">
+                    <MudTextField @bind-Value="@rol.Id_Rol" T="int" Disabled="true" ReadOnly="true" Label="#" Variant="Variant.Outlined"></MudTextField>
+                </div>
+                <div class="caja">
+                    <MudTextField @bind-Value="@rol.Nombre_Rol" T="string" Label="Nombre de Rol" Variant="Variant.Outlined"></MudTextField>
+                </div>
+                <div class="caja">
+                    <MudTextField @bind-Value="@rol.Descripcion" T="string" Label="Descripción" Variant="Variant.Outlined"></MudTextField>
+                </div>
+            </MudContainer>
+        </DialogContent>
+        <DialogActions>
+            <MudButton OnClick="Cancel">Cancel</MudButton>
+            <MudButton Color="Color.Primary" OnClick="Submit">Ok</MudButton>
+        </DialogActions>
+    </MudDialog>
+}
+
+
+
+@code {
+    [CascadingParameter] MudDialogInstance MudDialog { get; set; }
+
+    [Parameter]
+    public Rol rol { get; set; }
+
+    private UsuarioDetalle usuarioDetalle { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        var result = await RoleServices.Read(rol.Id_Rol);
+        rol = result.FirstOrDefault();
+    }
+
+    async Task Submit()
+    {
+        bool resultado = false;
+        try
+        {
+            var response = await RoleServices.Update(rol);
+            resultado = response.Result.Success;
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex.Message);
+            resultado = false;
+            throw;
+        }
+        MudDialog.Close(DialogResult.Ok(resultado));
+    }
+    
+    void Cancel() => MudDialog.Cancel();
+
+}
