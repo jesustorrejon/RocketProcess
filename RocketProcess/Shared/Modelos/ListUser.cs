@@ -7,9 +7,8 @@ using System.Threading.Tasks;
 
 namespace RocketProcess.Shared.Modelos
 {
-    public class UsuarioDetalle : Usuario
+    public class ListUser : Usuario
     {
         public int Id_Rol { get; set; }
-        public string Rol_Desc { get; set; }
     }
 }

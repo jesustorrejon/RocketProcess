@@ -1,28 +1,27 @@
 ﻿@inject ILoginServices LoginServices
 @inject IUserServices UserServices
+@inject IRoleServices RoleServices
 
 <style>
-    .caja{
+    .caja {
         padding-top: 1em;
         padding-bottom: 1em;
     }
 </style>
-@if (login is null || usuario is null)
+@if (_ListUser is null || _rol is null)
 {
     <div class="d-flex align-items-center text-center">
         <MudProgressCircular Color="Color.Info" Indeterminate="true" />
     </div>
 }
-else{
+else
+{
     <MudDialog DisableSidePadding="true">
         <TitleContent>
             <MudText>Editar Usuario</MudText>
         </TitleContent>
         <DialogContent>
             <MudContainer Style="max-height: 60vh; overflow-y: scroll">
-                <div class="caja">
-                    <MudTextField @bind-Value="@usuario.Id_Usuario" Disabled="true" ReadOnly="true" Label="#" Variant="Variant.Outlined"></MudTextField>
-                </div>
                 <div class="caja">
                     <MudTextField @bind-Value="@usuario.Rut" Label="RUT" Variant="Variant.Outlined"></MudTextField>
                 </div>
@@ -39,7 +38,12 @@ else{
                     <MudTextField @bind-Value="@usuario.Correo" Label="Correo" Variant="Variant.Outlined"></MudTextField>
                 </div>
                 <div class="caja">
-                    <MudTextField @bind-Value="@login.rol" Label="Rol" Variant="Variant.Outlined"></MudTextField>
+                    <MudSelect T="int" Placeholder="Selecciona un rol" @bind-Value="Id_Rol">
+                        @foreach (var rol in EnumRoles)
+                    {
+                         <MudSelectItem T="int" Value="@rol.Id_Rol">@rol.Nombre_Rol</MudSelectItem>
+                    }
+                    </MudSelect>
                 </div>
             </MudContainer>
         </DialogContent>
@@ -56,19 +60,25 @@ else{
     [CascadingParameter] MudDialogInstance MudDialog { get; set; }
 
     [Parameter]
-    public Usuario usuario { get; set; }
+    public Usuario usuario { get; set; } = new Usuario();
+
+    public Rol _rol { get; set; } = new Rol();
+    public IEnumerable<Rol> EnumRoles { get; set; }
+    public int Id_Rol { get; set; }
 
     private Login login { get; set; }
     private ListUser _ListUser { get; set; }
 
     protected override async Task OnInitializedAsync()
     {
-        var result = await LoginServices.LoginConnect(usuario.Correo, usuario.Clave);
-        login = result.FirstOrDefault();
+        //var result = await LoginServices.LoginConnect(usuario.Correo, usuario.Clave);
+        EnumRoles = await RoleServices.GetAll();
+        //login = result.FirstOrDefault();
         _ListUser = new ListUser();
     }
 
-    async void Submit(){
+    async void Submit()
+    {
         _ListUser.Id_Usuario = usuario.Id_Usuario;
         _ListUser.Nombre = usuario.Nombre;
         _ListUser.Apell_Paterno = usuario.Apell_Paterno;
@@ -77,11 +87,16 @@ else{
         _ListUser.Correo = usuario.Correo;
         _ListUser.Telefono = usuario.Telefono;
         _ListUser.Direccion = usuario.Direccion;
-        _ListUser.Id_Rol = 1;
+        _ListUser.Id_Rol = Id_Rol;
 
         var result = await UserServices.Save(_ListUser);
 
         MudDialog.Close(DialogResult.Ok(true));
     }
     void Cancel() => MudDialog.Cancel();
+}
+<h3>UserAdd</h3>
+
+@code {
+
 }

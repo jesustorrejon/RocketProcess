@@ -11,14 +11,14 @@
 }
 else{*@
     <h3 class="text-center pb-3">Usuarios</h3>
-    <MudDataGrid Outlined="true" Hover="true" T="Usuario" Items="@Enumusuarios" Virtualize="true" FixedHeader="true" Height="350px"
+    <MudDataGrid Outlined="true" Hover="true" T="ListUser" Items="@Enumusuarios" Virtualize="true" FixedHeader="true" Height="350px"
              Filterable="true" FilterMode="@DataGridFilterMode.ColumnFilterRow" Loading="@(Enumusuarios is null)">
         <Columns>
-            <Column T="Usuario" Field="Id_Usuario" Title="#"/>
-            <Column T="Usuario" Field="Nombre" />
-            <Column Sortable="false" T="Usuario" Field="Rut" />
-            <Column Sortable="false" T="Usuario" Field="Correo" />
-            <Column Sortable="false" T="Usuario" CellClass="d-flex justify-end">
+        <Column T="ListUser" Field="Id_Usuario" Title="#" />
+        <Column T="ListUser" Field="Nombre" />
+        <Column Sortable="false" T="ListUser" Field="Rut" />
+        <Column Sortable="false" T="ListUser" Field="Correo" />
+        <Column Sortable="false" T="ListUser" CellClass="d-flex justify-end">
             <CellTemplate>
                     <MudIconButton Size="@Size.Small" Icon="@Icons.Outlined.Edit" OnClick="@(e => Modificar(context.Item))" />
                     <MudIconButton Size="@Size.Small" Icon="@Icons.Material.Filled.Delete" OnClick="@(e => Eliminar(context.Item))" />
@@ -27,7 +27,7 @@ else{*@
         </Columns>
     </MudDataGrid>
     <MudCardActions Class="align-items-center pt-2 row flex-row-reverse">
-        <MudButton Class="col-lg-2 col-md-2 col-sm-12 col-xs-12 ml-5 mt-2 btn btn-info" Variant="Variant.Filled" Color="Color.Info" StartIcon="fas fa-user-plus">
+        <MudButton Class="col-lg-2 col-md-2 col-sm-12 col-xs-12 ml-5 mt-2 btn btn-info" OnClick="Agregar" Variant="Variant.Filled" Color="Color.Info" StartIcon="fas fa-user-plus">
             <MudText Class="pl-2">Agregar</MudText>
         </MudButton>
     </MudCardActions>
@@ -35,7 +35,7 @@ else{*@
 
 
 @code {
-    private IEnumerable<Usuario> Enumusuarios = new List<Usuario>();
+    private IEnumerable<ListUser> Enumusuarios = new List<ListUser>();
     DialogOptions dialog = new DialogOptions { CloseButton = false, NoHeader = true };
 
     HashSet<Usuario> _selectedItems = new();
@@ -44,14 +44,7 @@ else{*@
 
     protected async override Task OnInitializedAsync()
     {
-        var result = await UserServices.GetAll();
-        _selectedItems = Enumusuarios.ToHashSet();
-        _filterItems = Enumusuarios.ToHashSet();
-        _filterDefinition = new FilterDefinition<Usuario>
-            {
-                FilterFunction = x => _filterItems.Contains(x)
-            };
-        Enumusuarios = result;
+        Enumusuarios = await UserServices.GetAll();
     }
 
     private void Modificar(object xUsuario)
@@ -62,12 +55,25 @@ else{*@
         DialogService.Show<UserEdit>("",p, options);
     }
 
-    private void Eliminar(object xUsuario)
+    private async void Eliminar(object xUsuario)
     {
         var p = new DialogParameters();
         var options = new DialogOptions { CloseOnEscapeKey = true, DisableBackdropClick = true };
         p.Add("usuario", xUsuario);
-        DialogService.Show<UserDelete>("", p, options);
+        var dialog = DialogService.Show<UserDelete>("", p, options);
+        var result = await dialog.Result;
+
+        if (!result.Cancelled)
+        {
+            await UserServices.Delete((xUsuario as ListUser).Id_Usuario);
+        }
+    }
+
+    protected async Task Agregar()
+    {
+        var p = new DialogParameters();
+        var options = new DialogOptions { CloseOnEscapeKey = true, DisableBackdropClick = true };
+        DialogService.Show<UserAdd>("", p, options);
     }
 
     void ApplyFilter(FilterContext<Usuario> context)

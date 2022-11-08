@@ -1,6 +1,8 @@
 ﻿using RocketProcess.Services.Servicios.Interfaces;
 using RocketProcess.Shared;
+using RocketProcess.Shared.Entidades;
 using RocketProcess.Shared.Modelos;
+using RocketProcess.Shared.Utilidades;
 using System.Net.Http.Json;
 
 namespace RocketProcess.Services.Servicios.Services
@@ -14,14 +16,34 @@ namespace RocketProcess.Services.Servicios.Services
             _httpClient = httpClient;
         }
 
-        public async Task<IEnumerable<Usuario>> GetAll()
+        public async Task<Response<PostResponse>> Delete(int Id_Usuario)
         {
-            return await _httpClient.GetFromJsonAsync<IEnumerable<Usuario>>($"api/Usuarios/listar");
+            using (QueryString qs = new QueryString())
+            {
+                qs.Add("Id_Usuario", Id_Usuario.ToString());
+                var result = await _httpClient.DeleteAsync($"api/Usuarios{qs.ObtenerQueryString()}");
+                return await result.Content.ReadFromJsonAsync<Response<PostResponse>>();
+            }
+            
         }
 
-        public async Task<Response<PostResponse>> Guardar(UsuarioDetalle xUsuario)
+        public async Task<IEnumerable<ListUser>> GetAll()
         {
-            var result = await _httpClient.PostAsJsonAsync<UsuarioDetalle>($"api/Usuarios/agregar", xUsuario);
+            return await _httpClient.GetFromJsonAsync<IEnumerable<ListUser>>($"api/Usuarios/listar");
+        }
+
+        public async Task<IEnumerable<ListUser>> Read(int Id_Usuario)
+        {
+            using (QueryString qs = new QueryString())
+            {
+                qs.Add("Id_Usuario", Id_Usuario.ToString());
+                return await _httpClient.GetFromJsonAsync<IEnumerable<ListUser>>($"api/Usuarios{qs.ObtenerQueryString()}");
+            }
+        }
+
+        public async Task<Response<PostResponse>> Save(ListUser xUsuario)
+        {
+            var result = await _httpClient.PostAsJsonAsync<ListUser>($"api/Usuarios", xUsuario);
             return await result.Content.ReadFromJsonAsync<Response<PostResponse>>();
         }
     }

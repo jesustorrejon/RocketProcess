@@ -5,7 +5,7 @@ using System.Security.Principal;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace RocketProcess.Shared
+namespace RocketProcess.Shared.Entidades
 {
     public class Usuario
     {
@@ -19,7 +19,7 @@ namespace RocketProcess.Shared
         public string Nombre { get; set; }
         public string Apell_Paterno { get; set; }
         public string Apell_Materno { get; set; }
-        public int Rut { get; set; }
+        public string Rut { get; set; }
         public string Correo { get; set; }
         public string Clave { get; set; }
         public int Telefono { get; set; }
