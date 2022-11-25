@@ -1,0 +1,84 @@
+﻿@page "/Tareas"
+
+@*<RocketProcess.Razor.Pages.Estandar.Grilla>
+    <Encabezado></Encabezado>
+</RocketProcess.Razor.Pages.Estandar.Grilla>*@
+@*<div class="container p-0 contenedor-tabla">
+    <div class="table-responsive">
+        <table class="table table-striped table-hover @CssClass">
+            <thead>
+                <tr>
+                    <th @onclick="Ordenar" scope="col">Numero</th>
+                </tr>
+                <tr>
+                    <th scope="col"><MudTextField OnKeyDown="(e) => Buscar(e)" Clearable="true" ValueChanged="(e) => Buscar(xbusqueda: e)" T="string" Placeholder="Buscar..." Immediate="true" Value="busqueda" /></th>
+                </tr>
+                
+            </thead>
+            <tbody>
+                <Virtualize Items="lista_temporal" Context="String">
+                    <tr scope="row" @onclick="() => Capturar(String)">
+                        <td>@String</td>
+                    </tr>
+                </Virtualize>
+
+
+            </tbody>
+        </table>
+    </div>
+</div>*@
+<Grilla Virtualize="true" Buscador="true" Items="lista" T="string" CapturarFila="Capturar">
+    <Encabezado>
+        <th scope="col">ID</th>
+    </Encabezado>
+    <Fila>
+        <tr>@context</tr>
+    </Fila>
+</Grilla>
+
+
+
+@code {
+    List<string> lista;
+    int cantidadRegistros = 50000;
+
+    protected override void OnInitialized()
+    {
+        lista = new List<string>();
+        lista = ObtenerRegistros(0, cantidadRegistros);
+    }
+
+    private void GenerarRegistros(){
+        lista = ObtenerRegistros(0, cantidadRegistros);
+    }
+
+    ValueTask<ItemsProviderResult<String>> CargarRegistros(ItemsProviderRequest request)
+    {
+        var cantidadASolicitar = Math.Min(request.Count, cantidadRegistros - request.StartIndex);
+        var listaRegistros = ObtenerRegistros(request.StartIndex, cantidadASolicitar);
+        var resultado = new ItemsProviderResult<String>(listaRegistros, cantidadRegistros);
+        return ValueTask.FromResult(resultado);
+    }
+
+    public List<string> ObtenerRegistros(int inicial, int cantidad){
+        var listado = new List<string>();
+
+        if (lista is null)
+        {
+            lista = new List<string>();
+        }
+
+        for (int i = inicial; i < cantidad + inicial; i++)
+        {
+            string dato = i + " registro ";
+            listado.Add(dato);
+        }
+
+        return listado;
+    }
+
+    void Capturar(string registro){
+        string reg = registro;
+    }
+    
+}

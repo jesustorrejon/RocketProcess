@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.ResponseCompression;
 using Oracle.ManagedDataAccess.Client;
 using RocketProcess.Repositories.Interfaces;
 using RocketProcess.Repositories.Repositories;
+using RocketProcess.Shared.Entidades;
 using System.Data;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -18,6 +19,8 @@ builder.Services.AddSingleton<IDbConnection>((sp) => new OracleConnection(connSt
 builder.Services.AddScoped<IUsuariosRepositories, UsuariosRepositories>();
 builder.Services.AddScoped<ILoginRepositories, LoginRepositories>();
 builder.Services.AddScoped<IRoleRepositories, RoleRepositories>();
+builder.Services.AddScoped<ICRUD<Tarea>, TareasRepositories>();
+builder.Services.AddScoped<ITareasRepositories, TareasRepositories>();
 
 var app = builder.Build();
 

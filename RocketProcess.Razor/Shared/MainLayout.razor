@@ -8,40 +8,51 @@
 
 
 <div>
-    <MudDrawerContainer>
-        <MudAppBar Elevation="1" Dense="true" Color="Color.Dark">
-            <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" Edge="Edge.Start" OnClick="@ToggleDrawer" />
-            <MudSpacer />
-            <MudIconButton Icon="fas fa-satellite-dish" Title="Endpoints RocketProcess" Color="Color.Inherit" Edge="Edge.Start" Link="http://jesustorrejon.cl/swagger/index.html" Target="_blank" />
-            <MudSpacer />
-            <MudIconButton Icon="@Icons.Custom.Brands.GitHub" Title="Sobre mí" Color="Color.Inherit" Link="https://github.com/jesustorrejon" Target="_blank" />
-        </MudAppBar>
-        <MudDrawer Color="Color.Dark" @bind-Open="@open" Elevation="1" Breakpoint="Breakpoint.Always" ClipMode="DrawerClipMode.Always" Variant="@DrawerVariant.Persistent">
+    @*<MudDrawerContainer>*@
+        <MudMainContent>
+        <MudDrawer Style="background-color: #03009F; color: white" @bind-Open="@open" DisableOverlay="false" Elevation="1" Anchor="Anchor.Left" ClipMode="DrawerClipMode.Always" Variant="@DrawerVariant.Temporary">
             <MudDrawerHeader>
-                <MudText Typo="Typo.h6">Rocket Process</MudText>
+                <div class="d-flex align-middle align-items-center">
+                    <MudText Typo="Typo.h5" class="">Rocket Process</MudText>
+                    <MudSpacer></MudSpacer>
+                    <MudIcon Class="" Icon="@Icons.Material.Filled.Rocket" />
+                </div>
+
+                @*<MudImage Width="20" Height="5" Fluid="true" Alt="Logo" Src="css/images/launch.ico" />*@
             </MudDrawerHeader>
             <MudNavMenu>
-                <MudNavLink Href="/" Icon="fas fa-home" IconColor="Color.Default">Inicio</MudNavLink>
-                <MudNavGroup Title="Seguridad" Icon="fas fa-cogs" Expanded="true">
-                    <MudNavLink Href="/users" Icon="fas fa-users" IconColor="Color.Success">Usuarios</MudNavLink>
-                    <MudNavLink Href="/roles" Icon="fas fa-sitemap" IconColor="Color.Info">Roles</MudNavLink>
+
+                <MudNavLink Href="/" Icon="fas fa-home" IconColor="Color.Info" Style="color: white">Inicio</MudNavLink>
+                <MudNavLink Href="/Tareas" Icon="fas fa-edit" IconColor="Color.Info" Style="color: white">Tareas</MudNavLink>
+                <MudNavLink Href="/Flujos" Icon="fas fa-diagram-project" IconColor="Color.Info" Style="color: white">Flujos</MudNavLink>
+                <MudNavLink Href="/Avance" Icon="fas fa-calculator" IconColor="Color.Info" Style="color: white">Calcular Avance</MudNavLink>
+                <MudNavGroup Title="Seguridad" Icon="fas fa-cogs" IconColor="Color.Info">
+                    <MudNavLink Href="/users" Icon="fas fa-users" IconColor="Color.Primary">Usuarios</MudNavLink>
+                    <MudNavLink Href="/roles" Icon="fas fa-sitemap" IconColor="Color.Primary">Roles</MudNavLink>
                 </MudNavGroup>
+                <MudNavLink Href="/Acerca" Icon="fas fa-info" IconColor="Color.Info" Style="color: white">Acerca de Rocket</MudNavLink>
             </MudNavMenu>
         </MudDrawer>
-
-        <MudMainContent>
-            <MudContainer Class="mt-6">
+        <MudAppBar Elevation="1" Style="background-color: #03009F">
+            <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" Edge="Edge.False" OnClick="@ToggleDrawer" />
+                <MudSpacer />
+                <MudIconButton Icon="fas fa-satellite-dish" Title="Endpoints RocketProcess" Color="Color.Inherit" Edge="Edge.Start" Link="http://jesustorrejon.cl/swagger/index.html" Target="_blank" />
+                <MudSpacer />
+                <MudIconButton Icon="@Icons.Custom.Brands.GitHub" Title="Sobre mí" Color="Color.Inherit" Link="https://github.com/jesustorrejon" Target="_blank" />
+            </MudAppBar>
+            <MudContainer Class="mt-3">
                 @Body
             </MudContainer>
         </MudMainContent>
-    </MudDrawerContainer>
+    @*</MudDrawerContainer>*@
 </div>
 
 @code {
     bool open = false;
+    bool expandir = false;
 
     void ToggleDrawer()
     {
         open = !open;
     }
-                    }
+}

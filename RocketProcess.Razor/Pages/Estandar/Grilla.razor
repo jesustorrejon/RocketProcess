@@ -1,0 +1,45 @@
+﻿@typeparam T
+
+<div class="container p-0 contenedor-tabla">
+    <div class="table-responsive">
+        <table class="table table-striped table-hover @CssClass">
+            <thead>
+                <tr>
+                    @Encabezado
+                </tr>
+                @if (Buscador)
+                {
+                    <tr>
+                        <th scope="col"><MudTextField OnKeyDown="(e) => Buscar(e)" Clearable="true" ValueChanged="(e) => Buscar(xbusqueda: e)" T="string" Placeholder="Buscar..." Immediate="true" Value="busqueda" /></th>
+                    </tr>
+                }
+            </thead>
+            <tbody>
+                @if (Virtualize)
+                {
+                    <Virtualize Context="item" Items="lista_temporal" TItem="T">
+                        <ItemContent>
+                            <tr scope="row" @onclick="(() => CapturarFila.InvokeAsync(item))">
+                                @Fila(item)
+                            </tr>
+                        </ItemContent>
+                        <Placeholder>
+                            <MudProgressCircular Indeterminate="true" />
+                        </Placeholder>
+                    </Virtualize>
+                }
+                else
+                {
+                    @foreach (var item in Items)
+                    {
+                        <tr>@Fila(item)</tr>
+                    }
+                }
+            </tbody>
+        </table>
+        
+    </div>
+    <div>
+        <label>@lista_temporal.Count() registros encontrados.</label>
+    </div>
+</div>

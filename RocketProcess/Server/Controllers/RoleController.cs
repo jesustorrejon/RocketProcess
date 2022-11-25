@@ -38,10 +38,8 @@ namespace RocketProcess.Server.Controllers
         public async Task<IActionResult> Delete([FromQuery] int Id_Rol)
         {
             var result = await _roleRepositories.Delete(Id_Rol);
-            pr.Success = result;
-            pr.Error = result ? "" : $"Problema al eliminar el rol con id {Id_Rol}";
 
-            return Ok(new Response<PostResponse>(pr));
+            return Ok(new Response<PostResponse>(result));
         }
 
         [HttpPut]
@@ -49,10 +47,7 @@ namespace RocketProcess.Server.Controllers
         {
             var result = await _roleRepositories.Update(rol);
 
-            pr.Success = result;
-            pr.Error = result? "" : $"Problema al actualizar el rol {rol.Nombre_Rol}";
-
-            return Ok(new Response<PostResponse>(pr));
+            return Ok(new Response<PostResponse>(result));
         }
 
         [HttpPost]
@@ -60,10 +55,7 @@ namespace RocketProcess.Server.Controllers
         {
             var result = await _roleRepositories.Create(rol);
 
-            pr.Success = result;
-            pr.Error = result ? "" : $"Problema al crear el rol {rol.Nombre_Rol}";
-
-            return Ok(new Response<PostResponse>(pr));
+            return Ok(new Response<PostResponse>(result));
 
         }
     }

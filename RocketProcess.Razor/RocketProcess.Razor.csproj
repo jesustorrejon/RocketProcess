@@ -6,6 +6,45 @@
     <ImplicitUsings>enable</ImplicitUsings>
   </PropertyGroup>
 
+  <ItemGroup>
+    <Content Remove="wwwroot\css\font-awesome\css\all.css" />
+    <Content Remove="wwwroot\css\font-awesome\css\all.min.css" />
+    <Content Remove="wwwroot\css\font-awesome\css\brands.css" />
+    <Content Remove="wwwroot\css\font-awesome\css\brands.min.css" />
+    <Content Remove="wwwroot\css\font-awesome\css\fontawesome.css" />
+    <Content Remove="wwwroot\css\font-awesome\css\fontawesome.min.css" />
+    <Content Remove="wwwroot\css\font-awesome\css\regular.css" />
+    <Content Remove="wwwroot\css\font-awesome\css\regular.min.css" />
+    <Content Remove="wwwroot\css\font-awesome\css\solid.css" />
+    <Content Remove="wwwroot\css\font-awesome\css\solid.min.css" />
+    <Content Remove="wwwroot\css\font-awesome\css\svg-with-js.css" />
+    <Content Remove="wwwroot\css\font-awesome\css\svg-with-js.min.css" />
+    <Content Remove="wwwroot\css\font-awesome\css\v4-font-face.css" />
+    <Content Remove="wwwroot\css\font-awesome\css\v4-font-face.min.css" />
+    <Content Remove="wwwroot\css\font-awesome\css\v4-shims.css" />
+    <Content Remove="wwwroot\css\font-awesome\css\v4-shims.min.css" />
+    <Content Remove="wwwroot\css\font-awesome\css\v5-font-face.css" />
+    <Content Remove="wwwroot\css\font-awesome\css\v5-font-face.min.css" />
+    <Content Remove="wwwroot\css\font-awesome\js\all.js" />
+    <Content Remove="wwwroot\css\font-awesome\js\all.min.js" />
+    <Content Remove="wwwroot\css\font-awesome\js\brands.js" />
+    <Content Remove="wwwroot\css\font-awesome\js\brands.min.js" />
+    <Content Remove="wwwroot\css\font-awesome\js\conflict-detection.js" />
+    <Content Remove="wwwroot\css\font-awesome\js\conflict-detection.min.js" />
+    <Content Remove="wwwroot\css\font-awesome\js\fontawesome.js" />
+    <Content Remove="wwwroot\css\font-awesome\js\fontawesome.min.js" />
+    <Content Remove="wwwroot\css\font-awesome\js\regular.js" />
+    <Content Remove="wwwroot\css\font-awesome\js\regular.min.js" />
+    <Content Remove="wwwroot\css\font-awesome\js\solid.js" />
+    <Content Remove="wwwroot\css\font-awesome\js\solid.min.js" />
+    <Content Remove="wwwroot\css\font-awesome\js\v4-shims.js" />
+    <Content Remove="wwwroot\css\font-awesome\js\v4-shims.min.js" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Remove="Pages\Tareas\Tareas.razor.css" />
+  </ItemGroup>
+
 
   <ItemGroup>
     <SupportedPlatform Include="browser" />
@@ -22,7 +61,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Pages\Estandar\" />
+    <Folder Include="Pages\Flujos\" />
+    <Folder Include="wwwroot\css\images\" />
   </ItemGroup>
 
   <ItemGroup>
@@ -99,6 +139,109 @@
 
   <ItemGroup>
     <UpToDateCheckInput Remove="Pages\Inicio.razor" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="Pages\Tareas\Tareas.razor.css" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="wwwroot\css\font-awesome\css\all.css">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="wwwroot\css\font-awesome\css\all.min.css">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="wwwroot\css\font-awesome\css\brands.css">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="wwwroot\css\font-awesome\css\brands.min.css">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="wwwroot\css\font-awesome\css\fontawesome.css">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="wwwroot\css\font-awesome\css\fontawesome.min.css">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="wwwroot\css\font-awesome\css\regular.css">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="wwwroot\css\font-awesome\css\regular.min.css">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="wwwroot\css\font-awesome\css\solid.css">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="wwwroot\css\font-awesome\css\solid.min.css">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="wwwroot\css\font-awesome\css\svg-with-js.css">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="wwwroot\css\font-awesome\css\svg-with-js.min.css">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="wwwroot\css\font-awesome\css\v4-font-face.css">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="wwwroot\css\font-awesome\css\v4-font-face.min.css">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="wwwroot\css\font-awesome\css\v4-shims.css">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="wwwroot\css\font-awesome\css\v4-shims.min.css">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="wwwroot\css\font-awesome\css\v5-font-face.css">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="wwwroot\css\font-awesome\css\v5-font-face.min.css">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="wwwroot\css\font-awesome\js\all.js">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="wwwroot\css\font-awesome\js\all.min.js">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="wwwroot\css\font-awesome\js\brands.js">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="wwwroot\css\font-awesome\js\brands.min.js">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="wwwroot\css\font-awesome\js\conflict-detection.js">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="wwwroot\css\font-awesome\js\conflict-detection.min.js">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="wwwroot\css\font-awesome\js\fontawesome.js">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="wwwroot\css\font-awesome\js\fontawesome.min.js">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="wwwroot\css\font-awesome\js\regular.js">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="wwwroot\css\font-awesome\js\regular.min.js">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="wwwroot\css\font-awesome\js\solid.js">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="wwwroot\css\font-awesome\js\solid.min.js">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="wwwroot\css\font-awesome\js\v4-shims.js">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="wwwroot\css\font-awesome\js\v4-shims.min.js">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 
 </Project>

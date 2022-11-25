@@ -27,6 +27,10 @@
 	</ItemGroup>
 
 	<ItemGroup>
+	  <None Remove="wwwroot\css\images\launch.ico" />
+	</ItemGroup>
+
+	<ItemGroup>
 	  <Content Include="launch.ico" />
 	</ItemGroup>
 </Project>

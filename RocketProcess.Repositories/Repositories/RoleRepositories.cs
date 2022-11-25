@@ -9,6 +9,8 @@ using System.Data;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using RocketProcess.Shared.Modelos;
+using RocketProcess.Repositories.App;
 
 namespace RocketProcess.Repositories.Repositories
 {
@@ -21,7 +23,7 @@ namespace RocketProcess.Repositories.Repositories
             _dbConnection = dbConnection;
         }
 
-        public async Task<bool> Create(Rol rol)
+        public async Task<PostResponse> Create(Rol rol)
         {
             try
             {
@@ -31,17 +33,15 @@ namespace RocketProcess.Repositories.Repositories
 
                 var result = await _dbConnection.QueryAsync("PKG_ROL.SP_CREA_ROL", p, commandType: CommandType.StoredProcedure);
 
-                return true;
+                return PostResponse.CrearRespuesta(true, ClsCommon.SinErrores);
             }
             catch (Exception ex)
             {
-                Console.WriteLine("ERROR : " + ex.Message);
-                string error = ex.Message;
-                return false;
+                return PostResponse.CrearRespuesta(false, ClsCommon.MsgErrorCrear + ex.Message);
             }
         }
 
-        public async Task<bool> Delete(int Id_Rol)
+        public async Task<PostResponse> Delete(int Id_Rol)
         {
             try
             {
@@ -50,13 +50,11 @@ namespace RocketProcess.Repositories.Repositories
                
                 var result = await _dbConnection.QueryAsync("PKG_ROL.SP_ELIMINA_ROL", p, commandType: CommandType.StoredProcedure);
 
-                return true;
+                return PostResponse.CrearRespuesta(true, ClsCommon.SinErrores);
             }
             catch (Exception ex)
             {
-                Console.WriteLine("ERROR : " + ex.Message);
-                string error = ex.Message;
-                return false;
+                return PostResponse.CrearRespuesta(false, ClsCommon.MsgErrorEliminar + ex.Message);
             }
         }
 
@@ -98,7 +96,7 @@ namespace RocketProcess.Repositories.Repositories
             }
         }
 
-        public async Task<bool> Update(Rol rol)
+        public async Task<PostResponse> Update(Rol rol)
         {
             try
             {
@@ -109,13 +107,11 @@ namespace RocketProcess.Repositories.Repositories
 
                 var result = await _dbConnection.QueryAsync("PKG_ROL.SP_ACTUALIZA_ROL", p, commandType: CommandType.StoredProcedure);
 
-                return true;
+                return PostResponse.CrearRespuesta(true, ClsCommon.SinErrores);
             }
             catch (Exception ex)
             {
-                Console.WriteLine("ERROR : " + ex.Message);
-                string error = ex.Message;
-                return false;
+                return PostResponse.CrearRespuesta(false, ClsCommon.MsgErrorActualizar + ex.Message);
             }
         }
     }

@@ -13,11 +13,11 @@ namespace RocketProcess.Repositories.Interfaces
         Task<IEnumerable<ListUser>> GetAll();
         Task<string> GetDataSet(string query, string strNomTabla);
         Task<int> Login(string correo, string clave);
-        Task<bool> Create(ListUser xUsuario);
+        Task<PostResponse> Create(ListUser xUsuario);
         Task<IEnumerable<ListUser>> Read(int Id_Usuario);
 
-        Task<bool> Update(ListUser xUsuario);
-        Task<bool> Delete(int Id_Usuario);
+        Task<PostResponse> Update(ListUser xUsuario);
+        Task<PostResponse> Delete(int Id_Usuario);
 
     }
 }

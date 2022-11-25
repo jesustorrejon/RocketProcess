@@ -18,7 +18,7 @@ namespace RocketProcess.Server.Controllers
         }
 
         [HttpGet]
-        public async Task<IEnumerable<Login>> GetClientes([FromQuery] string correo, [FromQuery] string clave)
+        public async Task<IEnumerable<PostResponse>> GetClientes([FromQuery] string correo, [FromQuery] string clave)
         {
             return await _loginRepositories.Conectar(correo, clave);
         }

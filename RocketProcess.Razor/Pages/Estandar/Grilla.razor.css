@@ -1,0 +1,34 @@
+﻿table thead {
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    background-color: #ffffff;
+}
+
+table div {
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    background-color: #ffffff;
+}
+
+.table-responsive {
+    height: 50vh;
+    overflow: scroll;
+}
+
+.contenedor-tabla {
+    border-style: solid;
+    border-color: gray;
+    border-radius: 8px;
+    border-width: 3px;
+    overflow: hidden;
+}
+
+.container.p-0.contenedor-tabla > .table-responsive > .table.table-striped.table-hover > thead > tr{
+    border-style: none !important;
+}
+
+    .container.p-0.contenedor-tabla > .table-responsive > .table.table-striped.table-hover > thead > tr > th {
+        border-bottom-width: 0px !important;
+    }

@@ -2,6 +2,7 @@
 using Dapper.Oracle;
 using Newtonsoft.Json;
 using Oracle.ManagedDataAccess.Client;
+using RocketProcess.Repositories.App;
 using RocketProcess.Repositories.Data;
 using RocketProcess.Repositories.Interfaces;
 using RocketProcess.Shared.Entidades;
@@ -53,7 +54,7 @@ namespace RocketProcess.Repositories.Repositories
             return result;
         }
 
-        public async Task<bool> Create(ListUser xUsuario)
+        public async Task<PostResponse> Create(ListUser xUsuario)
         {
             try
             {
@@ -78,13 +79,11 @@ namespace RocketProcess.Repositories.Repositories
                     var result = await _dbConnection.QueryAsync("PKG_USUARIO.SP_ACTUALIZA_USUARIO", p, commandType: CommandType.StoredProcedure);
                 }
                 
-                return true;
+                return PostResponse.CrearRespuesta(true, ClsCommon.SinErrores);
             }
             catch (Exception ex)
             {
-                Console.WriteLine("ERROR : " + ex.Message);
-                string error = ex.Message;
-                return false;
+                return PostResponse.CrearRespuesta(false, ClsCommon.MsgErrorCrear + ex.Message);
             }
         }
 
@@ -130,7 +129,7 @@ namespace RocketProcess.Repositories.Repositories
             }
         }
 
-        public async Task<bool> Update(ListUser xUsuario)
+        public async Task<PostResponse> Update(ListUser xUsuario)
         {
             try
             {
@@ -149,22 +148,21 @@ namespace RocketProcess.Repositories.Repositories
 
                 if (result.Count() == 0)
                 {
-                    return true;
+                    return PostResponse.CrearRespuesta(true, ClsCommon.SinErrores);
                 }
                 else
                 {
-                    return false;
+                    return PostResponse.CrearRespuesta(true, ClsCommon.MsgErrorActualizar);
                 }
+                
             }
             catch (Exception ex)
             {
-                Console.WriteLine("ERROR : " + ex.Message);
-                string error = ex.Message;
-                return false;
+                return PostResponse.CrearRespuesta(false, ClsCommon.MsgErrorActualizar + ex.Message);
             }
         }
 
-        public async Task<bool> Delete(int Id_Usuario)
+        public async Task<PostResponse> Delete(int Id_Usuario)
         {
             try
             {
@@ -174,18 +172,16 @@ namespace RocketProcess.Repositories.Repositories
 
                 if (result.Count() == 0)
                 {
-                    return true;
+                    return PostResponse.CrearRespuesta(true, ClsCommon.SinErrores);
                 }
                 else
                 {
-                    return false;
+                    return PostResponse.CrearRespuesta(false, ClsCommon.MsgErrorEliminar);
                 }
             }
             catch (Exception ex)
             {
-                Console.WriteLine("ERROR : " + ex.Message);
-                string error = ex.Message;
-                return false;
+                return PostResponse.CrearRespuesta(false, ClsCommon.MsgErrorEliminar + ex.Message);
             }
         }
     }

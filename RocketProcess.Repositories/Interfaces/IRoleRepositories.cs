@@ -1,5 +1,6 @@
 ﻿using RocketProcess.Shared;
 using RocketProcess.Shared.Entidades;
+using RocketProcess.Shared.Modelos;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,9 +12,9 @@ namespace RocketProcess.Repositories.Interfaces
     public interface IRoleRepositories
     {
         Task<IEnumerable<Rol>> GetAll();
-        Task<bool> Create(Rol rol);
+        Task<PostResponse> Create(Rol rol);
         Task<IEnumerable<Rol>> Read(int Id_Rol);
-        Task<bool> Update(Rol rol);
-        Task<bool> Delete(int Id_Rol);
+        Task<PostResponse> Update(Rol rol);
+        Task<PostResponse> Delete(int Id_Rol);
     }
 }

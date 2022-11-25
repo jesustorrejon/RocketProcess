@@ -38,13 +38,8 @@ namespace RocketProcess.Server.Controllers
         public async Task<IActionResult> Create([FromBody] ListUser xUsuario)
         {
             var result = await _usuariosRepositories.Create(xUsuario);
-            PostResponse respuesta = new PostResponse() 
-            { 
-                Success = result,
-                Error = result? "" : "Error al guardar." 
-            };
 
-            return Ok(new Response<PostResponse>(respuesta));
+            return Ok(new Response<PostResponse>(result));
         }
 
         [HttpGet]
@@ -57,28 +52,17 @@ namespace RocketProcess.Server.Controllers
         public async Task<IActionResult> Update([FromBody] ListUser xUsuario)
         {
             var result = await _usuariosRepositories.Update(xUsuario);
-            PostResponse respuesta = new PostResponse()
-            {
-                Success = result,
-                Error = result ? "" : $"Error al actualizar el usuario {xUsuario.Nombre}."
-            };
 
-            return Ok(new Response<PostResponse>(respuesta));
+            return Ok(new Response<PostResponse>(result));
         }
 
         [HttpDelete]
         public async Task<IActionResult> Delete([FromQuery] int Id_Usuario)
         {
+            int id = Convert.ToInt32(Id_Usuario);
             var result = await _usuariosRepositories.Delete(Id_Usuario);
-            PostResponse respuesta = new PostResponse()
-            {
-                Success = result,
-                Error = result ? "" : $"Error al eliminar el id de usuario {Id_Usuario}."
-            };
 
-            return Ok(new Response<PostResponse>(respuesta));
+            return Ok(new Response<PostResponse>(result));
         }
-
-        
     }
 }
