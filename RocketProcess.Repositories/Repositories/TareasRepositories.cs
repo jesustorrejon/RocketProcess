@@ -10,6 +10,7 @@ using System.Data;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using RocketProcess.Shared.Modelos.ModelTarea;
 
 namespace RocketProcess.Repositories.Repositories
 {
@@ -77,9 +78,6 @@ namespace RocketProcess.Repositories.Repositories
                 p.Add("lista_tarea", dbType: OracleMappingType.RefCursor, direction: ParameterDirection.Output);
                 var result = await _dbConnection.QueryAsync<Tarea>("PKG_TAREA.SP_TAREA_GETALL", p, commandType: CommandType.StoredProcedure);
                 return result;
-                //string json = JsonConvert.SerializeObject(result, Formatting.Indented);
-
-                //return json;
             }
             catch (Exception ex)
             {

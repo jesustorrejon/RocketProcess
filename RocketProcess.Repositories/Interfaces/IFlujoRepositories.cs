@@ -1,5 +1,6 @@
 ﻿using RocketProcess.Shared.Entidades;
 using RocketProcess.Shared.Modelos;
+using RocketProcess.Shared.Modelos.ModelFlujo;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,10 +11,6 @@ namespace RocketProcess.Repositories.Interfaces
 {
     public interface IFlujoRepositories
     {
-        Task<IEnumerable<Flujo>> GetAll();
-        Task<PostResponse> Create(Flujo flujo);
-        Task<IEnumerable<Flujo>> Read(int Id_Flujo);
-        Task<PostResponse> Update(Flujo flujo);
-        Task<PostResponse> Delete(int Id_Flujo);
+        Task<IEnumerable<FlujoDetalle>> GetAllDetalle();
     }
 }

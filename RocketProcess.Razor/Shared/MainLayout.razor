@@ -1,4 +1,6 @@
 ﻿@inherits LayoutComponentBase
+@inject NavigationManager nm
+@inject AuthenticationStateProvider authStateProvider
 
 <link href="https://use.fontawesome.com/releases/v5.14.0/css/all.css" rel="stylesheet">
 
@@ -34,11 +36,23 @@
             </MudNavMenu>
         </MudDrawer>
         <MudAppBar Elevation="1" Style="background-color: #03009F">
-            <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" Edge="Edge.False" OnClick="@ToggleDrawer" />
+            <AuthorizeView>
+                <Authorized>
+                    <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" Edge="Edge.False" OnClick="@ToggleDrawer" />
+                </Authorized>
+                </AuthorizeView>
                 <MudSpacer />
                 <MudIconButton Icon="fas fa-satellite-dish" Title="Endpoints RocketProcess" Color="Color.Inherit" Edge="Edge.Start" Link="http://jesustorrejon.cl/swagger/index.html" Target="_blank" />
                 <MudSpacer />
                 <MudIconButton Icon="@Icons.Custom.Brands.GitHub" Title="Sobre mí" Color="Color.Inherit" Link="https://github.com/jesustorrejon" Target="_blank" />
+            <AuthorizeView>
+                <Authorized>
+                    <a @onclick="Logout" href="javascript:void(0)">Logout</a>
+                </Authorized>
+                <NotAuthorized>
+                    <a href="/login">Login</a>
+                </NotAuthorized>
+            </AuthorizeView>
             </MudAppBar>
             <MudContainer Class="mt-3">
                 @Body
@@ -54,5 +68,12 @@
     void ToggleDrawer()
     {
         open = !open;
+    }
+
+    private async Task Logout()
+    {
+        var customAuthStatePrrovider = (CustomAuthenticationStateProvider)authStateProvider;
+        await customAuthStatePrrovider.UpdateAuthenticationState(null);
+        nm.NavigateTo("/", true);
     }
 }

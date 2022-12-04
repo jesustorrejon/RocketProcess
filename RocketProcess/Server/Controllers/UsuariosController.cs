@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using RocketProcess.Repositories.Interfaces;
@@ -22,6 +23,7 @@ namespace RocketProcess.Server.Controllers
 
         [HttpGet]
         [Route("listar")]
+        //[Authorize(Roles ="Administrator")]
         public async Task<IEnumerable<ListUser>> GetClientes()
         {
             return await _usuariosRepositories.GetAll();

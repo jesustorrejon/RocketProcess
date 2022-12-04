@@ -1,4 +1,5 @@
 ﻿@page "/Users"
+@using RocketProcess.Razor.Authentication
 @inject IUserServices UserServices
 @inject IDialogService DialogService
 
@@ -44,7 +45,7 @@ else{*@
 
     protected async override Task OnInitializedAsync()
     {
-        Enumusuarios = await UserServices.GetAll();
+            Enumusuarios = await UserServices.GetAll();
     }
 
     private void Modificar(object xUsuario)

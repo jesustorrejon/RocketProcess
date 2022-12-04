@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace RocketProcess.Shared.Modelos
+namespace RocketProcess.Shared.Modelos.ModelTarea
 {
     public class TareaDetalle : Tarea
     {

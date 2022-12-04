@@ -1,8 +1,11 @@
-﻿using RocketProcess.Services.Servicios.Interfaces;
+﻿using Microsoft.AspNetCore.Components.Authorization;
+using RocketProcess.Services.Servicios.Interfaces;
 using RocketProcess.Shared;
 using RocketProcess.Shared.Entidades;
 using RocketProcess.Shared.Modelos;
 using RocketProcess.Shared.Utilidades;
+using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Net.Http.Json;
 
 namespace RocketProcess.Services.Servicios.Services
@@ -10,6 +13,8 @@ namespace RocketProcess.Services.Servicios.Services
     public class UserServices : IUserServices
     {
         private readonly HttpClient _httpClient;
+        private readonly AuthenticationStateProvider _authenticationStateProvider;
+        string? token;
 
         public UserServices(HttpClient httpClient)
         {

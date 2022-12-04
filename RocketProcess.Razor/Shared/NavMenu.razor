@@ -1,4 +1,5 @@
 ﻿@inject NavigationManager nm
+@inject AuthenticationStateProvider authStateProvider
 
 <style>
     .mud-nav-link .mud-nav-link-text{
@@ -19,6 +20,8 @@
     <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" Edge="Edge.Start" OnClick="@ToggleDrawer" />
     <MudSpacer />
     <MudIconButton Icon="@Icons.Custom.Brands.GitHub" Color="Color.Inherit" Link="https://github.com/MudBlazor/MudBlazor" Target="_blank" />
+
+    
 </MudAppBar>
 <MudDrawer @bind-Open="@open" Elevation="1" Breakpoint="Breakpoint.Lg" ClipMode="DrawerClipMode.Always" Variant="@DrawerVariant.Mini">
         <MudNavMenu>
@@ -56,4 +59,8 @@
     {
         open = !open;
     }
+
+
+
+    
 }

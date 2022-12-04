@@ -1,3 +1,5 @@
+using Blazored.SessionStorage;
+using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using Microsoft.AspNetCore.Components.WebView.WindowsForms;
@@ -6,6 +8,7 @@ using MudBlazor.Services;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using RocketProcess.Razor;
+using RocketProcess.Razor.Authentication;
 using RocketProcess.Razor.Pages.Usuarios;
 using RocketProcess.Services.Servicios.Interfaces;
 using RocketProcess.Services.Servicios.Services;
@@ -21,9 +24,16 @@ namespace RocketProcessDesktop
         {
             var serviceCollection = new ServiceCollection();
             serviceCollection.AddWindowsFormsBlazorWebView();
+            serviceCollection.AddBlazoredSessionStorage();
+            serviceCollection.AddScoped<AuthenticationStateProvider, CustomAuthenticationStateProvider>();
+            serviceCollection.AddAuthorizationCore();
+
             serviceCollection.AddScoped<ILoginServices, LoginServices>();
             serviceCollection.AddScoped<IUserServices, UserServices>();
             serviceCollection.AddScoped<IRoleServices, RoleServices>();
+            serviceCollection.AddBlazoredSessionStorage();
+            serviceCollection.AddScoped<AuthenticationStateProvider, CustomAuthenticationStateProvider>();
+            serviceCollection.AddAuthorizationCore();
             string apiURL = ObtenerUriApi();
             serviceCollection.AddScoped<HttpClient>(sp => new HttpClient { BaseAddress = new Uri(apiURL) });
             //serviceCollection.AddScoped(sp => new HttpClient { BaseAddress = new Uri(builder.HostEnvironment.BaseAddress) });

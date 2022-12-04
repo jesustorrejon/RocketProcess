@@ -1,5 +1,5 @@
 ﻿using RocketProcess.Shared.Entidades;
-using RocketProcess.Shared.Modelos;
+using RocketProcess.Shared.Modelos.ModelTarea;
 using System;
 using System.Collections.Generic;
 using System.Linq;

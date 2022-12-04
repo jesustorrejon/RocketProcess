@@ -5,10 +5,15 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace RocketProcess.Shared.Modelos
+namespace RocketProcess.Shared.Modelos.ModelFlujo
 {
     public class FlujoDetalle : Flujo
     {
-        public List<TareaDetalle> Tareas { get; set; }
+        public FlujoDetalle()
+        {
+            Tareas = new List<TareaDeFlujo>();
+        }
+
+        public List<TareaDeFlujo> Tareas { get; set; }
     }
 }
