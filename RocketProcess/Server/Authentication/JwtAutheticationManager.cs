@@ -18,13 +18,13 @@ namespace RocketProcess.Server.Authentication
             _userAccountService = userAccountService;
         }
 
-        public UserSession? GenerateJwtToken(string userName, string password)
+        public UserSession? GenerateJwtToken(string correo, string password)
         {
-            if (string.IsNullOrWhiteSpace(userName) || string.IsNullOrWhiteSpace(password))
+            if (string.IsNullOrWhiteSpace(correo) || string.IsNullOrWhiteSpace(password))
                 return null;
             
             // Validacion las credenciales de usuario
-            var userAcoount = _userAccountService.GetUserAccountByUserName(userName);
+            var userAcoount = _userAccountService.GetUserAccountByUserName(correo, password).GetAwaiter().GetResult();
             if (userAcoount == null || userAcoount.Password != password)
                 return null;
 

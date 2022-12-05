@@ -44,8 +44,8 @@ else{
             </MudContainer>
         </DialogContent>
         <DialogActions>
-            <MudButton OnClick="Cancel">Cancel</MudButton>
-            <MudButton Color="Color.Primary" OnClick="Submit">Ok</MudButton>
+            <MudButton OnClick="Cancel">Cancelar</MudButton>
+            <MudButton Color="Color.Primary" OnClick="Submit">Grabar</MudButton>
         </DialogActions>
     </MudDialog>
 }
@@ -77,7 +77,8 @@ else{
         _ListUser.Correo = usuario.Correo;
         _ListUser.Telefono = usuario.Telefono;
         _ListUser.Direccion = usuario.Direccion;
-        _ListUser.Id_Rol = 1;
+        _ListUser.Id_Rol = login.id_rol;
+        _ListUser.Clave = login.clave;
 
         var result = await UserServices.Save(_ListUser);
 

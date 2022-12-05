@@ -45,15 +45,22 @@ else{*@
 
     protected async override Task OnInitializedAsync()
     {
-            Enumusuarios = await UserServices.GetAll();
+        Enumusuarios = await UserServices.GetAll();
     }
 
-    private void Modificar(object xUsuario)
+    private async Task Modificar(object xUsuario)
     {
         var p = new DialogParameters();
         var options = new DialogOptions { CloseOnEscapeKey = true, DisableBackdropClick = true};
         p.Add("usuario", xUsuario);
-        DialogService.Show<UserEdit>("",p, options);
+        var dialog = DialogService.Show<UserEdit>("",p, options);
+        var result = await dialog.Result;
+        if(!result.Cancelled)
+        {
+            Enumusuarios = await UserServices.GetAll();
+            StateHasChanged();
+        }
+
     }
 
     private async void Eliminar(object xUsuario)
@@ -74,7 +81,7 @@ else{*@
     {
         var p = new DialogParameters();
         var options = new DialogOptions { CloseOnEscapeKey = true, DisableBackdropClick = true };
-        DialogService.Show<UserAdd>("", p, options);
+        DialogService.Show<UserAdd>("Agregar", p, options);
     }
 
     void ApplyFilter(FilterContext<Usuario> context)

@@ -23,7 +23,7 @@ namespace RocketProcess.Server.Controllers
         public ActionResult<UserSession> Login([FromBody] LoginRequest loginRequest)
         {
             var jwtAuthenticationManager = new JwtAutheticationManager(_userAccountService);
-            var userSession = jwtAuthenticationManager.GenerateJwtToken(loginRequest.UserName, loginRequest.Password);
+            var userSession = jwtAuthenticationManager.GenerateJwtToken(loginRequest.Correo, loginRequest.Password);
 
             if (userSession == null)
                 return Unauthorized();

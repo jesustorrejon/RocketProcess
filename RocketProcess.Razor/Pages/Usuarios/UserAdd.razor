@@ -8,6 +8,11 @@
         padding-bottom: 1em;
     }
 </style>
+<MudDialog DisableSidePadding="true">
+        <TitleContent>
+            <MudText>Editar Usuario</MudText>
+        </TitleContent>
+        <DialogContent>
 @if (_ListUser is null || _rol is null)
 {
     <div class="d-flex align-items-center text-center">
@@ -16,29 +21,34 @@
 }
 else
 {
-    <MudDialog DisableSidePadding="true">
-        <TitleContent>
-            <MudText>Editar Usuario</MudText>
-        </TitleContent>
-        <DialogContent>
+    
             <MudContainer Style="max-height: 60vh; overflow-y: scroll">
                 <div class="caja">
-                    <MudTextField @bind-Value="@usuario.Rut" Label="RUT" Variant="Variant.Outlined"></MudTextField>
+                    <MudTextField @bind-Value="@_ListUser.Rut" Label="RUT" Variant="Variant.Outlined"></MudTextField>
                 </div>
                 <div class="caja">
-                    <MudTextField @bind-Value="@usuario.Nombre" Label="Nombre" Variant="Variant.Outlined"></MudTextField>
+                    <MudTextField @bind-Value="@_ListUser.Nombre" Label="Nombre" Variant="Variant.Outlined"></MudTextField>
                 </div>
                 <div class="caja">
-                    <MudTextField @bind-Value="@usuario.Apell_Paterno" Label="Apellido Paterno" Variant="Variant.Outlined"></MudTextField>
+                    <MudTextField @bind-Value="@_ListUser.Apell_Paterno" Label="Apellido Paterno" Variant="Variant.Outlined"></MudTextField>
                 </div>
                 <div class="caja">
-                    <MudTextField @bind-Value="@usuario.Apell_Materno" Label="Apellido Materno" Variant="Variant.Outlined"></MudTextField>
+                    <MudTextField @bind-Value="@_ListUser.Apell_Materno" Label="Apellido Materno" Variant="Variant.Outlined"></MudTextField>
                 </div>
                 <div class="caja">
-                    <MudTextField @bind-Value="@usuario.Correo" Label="Correo" Variant="Variant.Outlined"></MudTextField>
+                    <MudTextField @bind-Value="@_ListUser.Correo" Label="Correo" Variant="Variant.Outlined"></MudTextField>
                 </div>
                 <div class="caja">
-                    <MudSelect T="int" Placeholder="Selecciona un rol" @bind-Value="Id_Rol">
+                    <MudTextField @bind-Value="@_ListUser.Clave" Label="Clave" Variant="Variant.Outlined"></MudTextField>
+                </div>
+                <div class="caja">
+                    <MudTextField @bind-Value="@_ListUser.Telefono" Label="Telefono" Variant="Variant.Outlined"></MudTextField>
+                </div>
+                <div class="caja">
+                    <MudTextField @bind-Value="@_ListUser.Direccion" Label="Direccion" Variant="Variant.Outlined"></MudTextField>
+                </div>
+                <div class="caja">
+                    <MudSelect T="int" Placeholder="Selecciona un rol" @bind-Value="_ListUser.Id_Rol">
                         @foreach (var rol in EnumRoles)
                     {
                          <MudSelectItem T="int" Value="@rol.Id_Rol">@rol.Nombre_Rol</MudSelectItem>
@@ -46,20 +56,20 @@ else
                     </MudSelect>
                 </div>
             </MudContainer>
-        </DialogContent>
-        <DialogActions>
-            <MudButton OnClick="Cancel">Cancel</MudButton>
-            <MudButton Color="Color.Primary" OnClick="Submit">Ok</MudButton>
-        </DialogActions>
-    </MudDialog>
+        
+       
 }
-
+    </DialogContent>
+    <DialogActions>
+        <MudButton OnClick="Cancel">Cancelar</MudButton>
+        <MudButton Color="Color.Primary" OnClick="Submit">Grabar</MudButton>
+ </DialogActions>
+    </MudDialog>
 
 
 @code {
     [CascadingParameter] MudDialogInstance MudDialog { get; set; }
 
-    [Parameter]
     public Usuario usuario { get; set; } = new Usuario();
 
     public Rol _rol { get; set; } = new Rol();
@@ -79,24 +89,9 @@ else
 
     async void Submit()
     {
-        _ListUser.Id_Usuario = usuario.Id_Usuario;
-        _ListUser.Nombre = usuario.Nombre;
-        _ListUser.Apell_Paterno = usuario.Apell_Paterno;
-        _ListUser.Apell_Materno = usuario.Apell_Materno;
-        _ListUser.Rut = usuario.Rut;
-        _ListUser.Correo = usuario.Correo;
-        _ListUser.Telefono = usuario.Telefono;
-        _ListUser.Direccion = usuario.Direccion;
-        _ListUser.Id_Rol = Id_Rol;
-
         var result = await UserServices.Save(_ListUser);
 
         MudDialog.Close(DialogResult.Ok(true));
     }
     void Cancel() => MudDialog.Cancel();
-}
-<h3>UserAdd</h3>
-
-@code {
-
 }

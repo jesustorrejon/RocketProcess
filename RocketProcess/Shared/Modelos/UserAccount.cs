@@ -1,4 +1,4 @@
-﻿namespace RocketProcess.Server.Authentication
+﻿namespace RocketProcess.Shared.Modelos
 {
     public class UserAccount
     {

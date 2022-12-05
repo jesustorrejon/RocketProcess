@@ -48,8 +48,17 @@ namespace RocketProcess.Services.Servicios.Services
 
         public async Task<Response<PostResponse>> Save(ListUser xUsuario)
         {
-            var result = await _httpClient.PostAsJsonAsync<ListUser>($"api/Usuarios", xUsuario);
-            return await result.Content.ReadFromJsonAsync<Response<PostResponse>>();
+            if (xUsuario.Id_Usuario > 0)
+            {
+                var result = await _httpClient.PutAsJsonAsync<ListUser>($"api/Usuarios", xUsuario);
+                return await result.Content.ReadFromJsonAsync<Response<PostResponse>>();
+            }
+            else
+            {
+                var result = await _httpClient.PostAsJsonAsync<ListUser>($"api/Usuarios", xUsuario);
+                return await result.Content.ReadFromJsonAsync<Response<PostResponse>>();
+            }
+            
         }
     }
 }

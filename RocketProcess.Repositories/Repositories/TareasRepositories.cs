@@ -29,16 +29,16 @@ namespace RocketProcess.Repositories.Repositories
             try
             {
                 var p = new OracleDynamicParameters();
-                p.Add("v_nombre", dbType: OracleMappingType.Varchar2, direction: ParameterDirection.Input);
-                p.Add("v_fecha_inicio", dbType: OracleMappingType.Date, direction: ParameterDirection.Input);
-                p.Add("v_fecha_termino", dbType: OracleMappingType.Date, direction: ParameterDirection.Input);
-                p.Add("v_descripcion", dbType: OracleMappingType.Varchar2, direction: ParameterDirection.Input);
-                p.Add("v_usuario_asignado", dbType: OracleMappingType.Int32, direction: ParameterDirection.Input);
-                p.Add("v_id_usuario_supervisor", dbType: OracleMappingType.Int32, direction: ParameterDirection.Input);
-                p.Add("v_tarea_principal", dbType: OracleMappingType.Int32, direction: ParameterDirection.Input);
-                p.Add("v_flujo_asignado", dbType: OracleMappingType.Int32, direction: ParameterDirection.Input);
-                p.Add("v_id_estado", dbType: OracleMappingType.Int32, direction: ParameterDirection.Input);
-                p.Add("v_id_area", dbType: OracleMappingType.Int32, direction: ParameterDirection.Input);
+                p.Add("v_nombre",  Modelo.Nombre, dbType: OracleMappingType.Varchar2, direction: ParameterDirection.Input);
+                p.Add("v_fecha_inicio", Modelo.Fecha_Inicio, dbType: OracleMappingType.Date, direction: ParameterDirection.Input);
+                p.Add("v_fecha_termino", Modelo.Fecha_Termino, dbType: OracleMappingType.Date, direction: ParameterDirection.Input);
+                p.Add("v_descripcion", Modelo.Descripcion_Tarea, dbType: OracleMappingType.Varchar2, direction: ParameterDirection.Input);
+                p.Add("v_usuario_asignado", Modelo.Id_Usuario, dbType: OracleMappingType.Int32, direction: ParameterDirection.Input);
+                p.Add("v_id_usuario_supervisor", Modelo.Id_Supervisor, dbType: OracleMappingType.Int32, direction: ParameterDirection.Input);
+                p.Add("v_tarea_principal", Modelo.Id_Tarea_Principal, dbType: OracleMappingType.Int32, direction: ParameterDirection.Input);
+                p.Add("v_flujo_asignado", Modelo.Id_Flujo, dbType: OracleMappingType.Int32, direction: ParameterDirection.Input);
+                p.Add("v_id_estado", Modelo.Id_Estado, dbType: OracleMappingType.Int32, direction: ParameterDirection.Input);
+                p.Add("v_id_area", Modelo.Id_Area, dbType: OracleMappingType.Int32, direction: ParameterDirection.Input);
                 var result = await _dbConnection.ExecuteAsync("PKG_TAREA.SP_CREAR_TAREA",p, commandType: CommandType.StoredProcedure);
 
                 return PostResponse.CrearRespuesta(true, ClsCommon.SinErrores);
@@ -159,17 +159,17 @@ namespace RocketProcess.Repositories.Repositories
             try
             {
                 var p = new OracleDynamicParameters();
-                p.Add("v_id_tarea", dbType: OracleMappingType.Int32, direction: ParameterDirection.Input);
-                p.Add("v_nombre", dbType: OracleMappingType.Varchar2, direction: ParameterDirection.Input);
-                p.Add("v_fecha_inicio", dbType: OracleMappingType.Date, direction: ParameterDirection.Input);
-                p.Add("v_fecha_termino", dbType: OracleMappingType.Date, direction: ParameterDirection.Input);
-                p.Add("v_descripcion", dbType: OracleMappingType.Varchar2, direction: ParameterDirection.Input);
-                p.Add("v_usuario_asignado", dbType: OracleMappingType.Int32, direction: ParameterDirection.Input);
-                p.Add("v_id_usuario_supervisor", dbType: OracleMappingType.Int32, direction: ParameterDirection.Input);
-                p.Add("v_tarea_principal", dbType: OracleMappingType.Int32, direction: ParameterDirection.Input);
-                p.Add("v_flujo_asignado", dbType: OracleMappingType.Int32, direction: ParameterDirection.Input);
-                p.Add("v_id_estado", dbType: OracleMappingType.Int32, direction: ParameterDirection.Input);
-                p.Add("v_id_area", dbType: OracleMappingType.Int32, direction: ParameterDirection.Input);
+                p.Add("v_id_tarea", Modelo.Id_Tarea, dbType: OracleMappingType.Int32, direction: ParameterDirection.Input);
+                p.Add("v_nombre", Modelo.Nombre, dbType: OracleMappingType.Varchar2, direction: ParameterDirection.Input);
+                p.Add("v_fecha_inicio", Modelo.Fecha_Inicio, dbType: OracleMappingType.Date, direction: ParameterDirection.Input);
+                p.Add("v_fecha_termino", Modelo.Fecha_Termino, dbType: OracleMappingType.Date, direction: ParameterDirection.Input);
+                p.Add("v_descripcion", Modelo.Descripcion_Tarea, dbType: OracleMappingType.Varchar2, direction: ParameterDirection.Input);
+                p.Add("v_usuario_asignado", Modelo.Id_Usuario, dbType: OracleMappingType.Int32, direction: ParameterDirection.Input);
+                p.Add("v_id_usuario_supervisor", Modelo.Id_Supervisor, dbType: OracleMappingType.Int32, direction: ParameterDirection.Input);
+                p.Add("v_tarea_principal", Modelo.Id_Tarea_Principal, dbType: OracleMappingType.Int32, direction: ParameterDirection.Input);
+                p.Add("v_flujo_asignado", Modelo.Id_Flujo, dbType: OracleMappingType.Int32, direction: ParameterDirection.Input);
+                p.Add("v_id_estado", Modelo.Id_Estado, dbType: OracleMappingType.Int32, direction: ParameterDirection.Input);
+                p.Add("v_id_area", Modelo.Id_Area, dbType: OracleMappingType.Int32, direction: ParameterDirection.Input);
                 var result = await _dbConnection.ExecuteAsync("PKG_TAREA.SP_ACTUALIZA_TAREA", p, commandType: CommandType.StoredProcedure);
 
                 return PostResponse.CrearRespuesta(true, ClsCommon.SinErrores);

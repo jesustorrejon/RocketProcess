@@ -1,5 +1,6 @@
 ﻿using RocketProcess.Repositories.Interfaces;
 using RocketProcess.Repositories.Repositories;
+using RocketProcess.Shared.Modelos;
 using System.Data;
 
 namespace RocketProcess.Server.Authentication
@@ -9,17 +10,22 @@ namespace RocketProcess.Server.Authentication
         private List<UserAccount> _userAccountList;
         private IDbConnection _dbConnection;
         private UsuariosRepositories _UsuariosRepositories;
+        private LoginRepositories _loginRepositories;
+        private Login _login;
 
         public UserAccountService(IDbConnection dbConnection)
         {
-            _UsuariosRepositories = new UsuariosRepositories(dbConnection);
-            var usuarios = _UsuariosRepositories.GetAll().GetAwaiter().GetResult();
-            _userAccountList = new List<UserAccount>();
+            _dbConnection = dbConnection;
+            _loginRepositories = new LoginRepositories(_dbConnection);
+            //_UsuariosRepositories = new UsuariosRepositories(dbConnection);
+            //var usuarios = _UsuariosRepositories.GetAll().GetAwaiter().GetResult();
 
-            foreach (var usuario in usuarios)
-            {
-                _userAccountList.Add( new UserAccount { UserName = usuario.Nombre, Password = usuario.Clave, Role = usuario.Id_Rol.ToString() });
-            }
+            //_userAccountList = new List<UserAccount>();
+
+            //foreach (var usuario in usuarios)
+            //{
+            //    _userAccountList.Add( new UserAccount { UserName = usuario.Nombre, Password = usuario.Clave, Role = usuario.Id_Rol.ToString() });
+            //}
 
             //_userAccountList = new List<UserAccount>()
             //{
@@ -29,9 +35,22 @@ namespace RocketProcess.Server.Authentication
 
         }
 
-        public UserAccount? GetUserAccountByUserName(string userName)
+        public async Task<UserAccount>? GetUserAccountByUserName(string correo, string password)
         {
-            return _userAccountList.FirstOrDefault(x => x.UserName == userName);
+            var usuario = await _loginRepositories.Conectar(correo, password);
+            _login = usuario.FirstOrDefault(x => x.correo == correo);
+
+            if (_login == null)
+                return null;
+
+            UserAccount userAccount = new UserAccount
+            {
+                UserName = _login.nombre,
+                Password = _login.clave,
+                Role = _login.rol
+            };
+
+            return userAccount;
         }
     }
 }

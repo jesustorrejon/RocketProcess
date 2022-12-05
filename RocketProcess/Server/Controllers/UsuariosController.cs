@@ -39,6 +39,11 @@ namespace RocketProcess.Server.Controllers
         [HttpPost]
         public async Task<IActionResult> Create([FromBody] ListUser xUsuario)
         {
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            
+
             var result = await _usuariosRepositories.Create(xUsuario);
 
             return Ok(new Response<PostResponse>(result));

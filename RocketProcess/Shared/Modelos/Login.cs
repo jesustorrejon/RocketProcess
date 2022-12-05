@@ -15,5 +15,6 @@ namespace RocketProcess.Shared.Modelos
         public string rol { get; set; }
         public int id_usuario { get; set; }
         public int id_rol { get; set; }
+        public string clave { get; set; }
     }
 }
