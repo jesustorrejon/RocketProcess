@@ -1,0 +1,70 @@
+﻿@page "/Flujos"
+@using RocketProcess.Shared.Modelos.ModelFlujo
+@inject IFlujosServices FlujosServices
+@inject IDialogService DialogService
+
+<h3>Flujos</h3>
+
+<MudDataGrid Outlined="true" Hover="true" T="FlujoDetalle" Items="@EnumFlujos" Virtualize="true" FixedHeader="true" Height="350px"
+             Filterable="true" FilterMode="@DataGridFilterMode.ColumnFilterRow" Loading="@(EnumFlujos is null)">
+    <Columns>
+        <Column T="FlujoDetalle" Field="Id_Flujo" Title="#" />
+        <Column T="FlujoDetalle" Field="Nombre" />
+        <Column T="FlujoDetalle" Field="Descripcion" />
+    </Columns>
+</MudDataGrid>
+<MudCardActions Class="align-items-center pt-2 row flex-row-reverse">
+    <MudButton Class="col-lg-2 col-md-2 col-sm-12 col-xs-12 ml-5 mt-2 btn btn-info" OnClick="Agregar" Variant="Variant.Filled" Color="Color.Info" StartIcon="fas fa-user-plus">
+        <MudText Class="pl-2">Agregar</MudText>
+    </MudButton>
+</MudCardActions>
+
+@code {
+    private IEnumerable<FlujoDetalle> EnumFlujos = new List<FlujoDetalle>();
+    DialogOptions dialog = new DialogOptions { CloseButton = false, NoHeader = true };
+
+    HashSet<Usuario> _selectedItems = new();
+    HashSet<Usuario> _filterItems = new();
+    FilterDefinition<Usuario> _filterDefinition;
+
+    protected async override Task OnInitializedAsync()
+    {
+        EnumFlujos = await FlujosServices.ObtenerFlujos();
+    }
+
+    private async Task Modificar(object xUsuario)
+    {
+        //var p = new DialogParameters();
+        //var options = new DialogOptions { CloseOnEscapeKey = true, DisableBackdropClick = true };
+        //p.Add("usuario", xUsuario);
+        //var dialog = DialogService.Show<FlujoEdit>("", p, options);
+        //var result = await dialog.Result;
+        //if (!result.Cancelled)
+        //{
+        //    Enumusuarios = await FlujosServices.GetAll();
+        //    StateHasChanged();
+        //}
+
+    }
+
+    private async void Eliminar(object xUsuario)
+    {
+        //var p = new DialogParameters();
+        //var options = new DialogOptions { CloseOnEscapeKey = true, DisableBackdropClick = true };
+        //p.Add("usuario", xUsuario);
+        //var dialog = DialogService.Show<FlujoDelete>("", p, options);
+        //var result = await dialog.Result;
+
+        //if (!result.Cancelled)
+        //{
+        //    await FlujosServices.Delete((xUsuario as ListUser).Id_Usuario);
+        //}
+    }
+
+    protected async Task Agregar()
+    {
+        //var p = new DialogParameters();
+        //var options = new DialogOptions { CloseOnEscapeKey = true, DisableBackdropClick = true };
+        //DialogService.Show<FlujoAdd>("Agregar", p, options);
+    }
+}

@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Authorization;
 using RocketProcess.Razor.Extensions;
-using RocketProcess.Shared.Modelos;
+using RocketProcess.Shared.Seguridad;
 using System.Security.Claims;
 
 namespace RocketProcess.Razor.Authentication
@@ -31,6 +31,7 @@ namespace RocketProcess.Razor.Authentication
                 {
                     new Claim(ClaimTypes.Name, userSession.UserName),
                     new Claim(ClaimTypes.Role, userSession.Role),
+                    new Claim("Permiso","Cualquier cosa"),
                 }, "JwtAuth"));
 
                 return await Task.FromResult(new AuthenticationState(claimsPrincipal));
@@ -51,6 +52,8 @@ namespace RocketProcess.Razor.Authentication
                 {
                     new Claim(ClaimTypes.Name, userSession.UserName),
                     new Claim(ClaimTypes.Role, userSession.Role),
+                    new Claim(Filtros.Nombre, userSession.UserName),
+
                 }));
                 userSession.ExpiryTimeStamp = DateTime.Now.AddSeconds(userSession.ExpiresIn);
                 await _sessionStorage.SaveItemEncryptedAsync("UserSession", userSession);

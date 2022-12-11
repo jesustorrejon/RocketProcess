@@ -21,5 +21,8 @@ builder.Services.AddMudServices();
 builder.Services.AddScoped<ILoginServices, LoginServices>();
 builder.Services.AddScoped<IUserServices, UserServices>();
 builder.Services.AddScoped<IRoleServices, RoleServices>();
+builder.Services.AddScoped<IFlujosServices, FlujosServices>();
+builder.Services.AddScoped<ITareasServices, TareasServices>();
+builder.Services.AddScoped<IEstadoServices, EstadoServices>();
 
 await builder.Build().RunAsync();

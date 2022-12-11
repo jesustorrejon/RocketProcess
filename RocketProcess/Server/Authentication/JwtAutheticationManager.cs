@@ -1,5 +1,5 @@
 ﻿using Microsoft.IdentityModel.Tokens;
-using RocketProcess.Shared.Modelos;
+using RocketProcess.Shared.Seguridad;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
@@ -25,7 +25,7 @@ namespace RocketProcess.Server.Authentication
             
             // Validacion las credenciales de usuario
             var userAcoount = _userAccountService.GetUserAccountByUserName(correo, password).GetAwaiter().GetResult();
-            if (userAcoount == null || userAcoount.Password != password)
+            if (userAcoount == null || userAcoount.Password.ToUpper() != password.ToUpper())
                 return null;
 
             // Generando JWT Token
@@ -59,6 +59,7 @@ namespace RocketProcess.Server.Authentication
                 UserName = userAcoount.UserName,
                 Role = userAcoount.Role,
                 Token = token,
+                Permisos = "cualquiera",
                 ExpiresIn = (int)tokenExpiryTimeStamp.Subtract(DateTime.Now).TotalSeconds
             };
 

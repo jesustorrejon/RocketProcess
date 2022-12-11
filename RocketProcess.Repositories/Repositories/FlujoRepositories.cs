@@ -56,87 +56,141 @@ namespace RocketProcess.Repositories.Repositories
             }
         }
 
-        public async Task<IEnumerable<FlujoDetalle>> GetAllDetalle()
+        public async Task<IEnumerable<SP_FLUJO_GETALLDETALLE>> GetAllDetalle()
         {
             try
             {
-                TareasRepositories tr = new TareasRepositories(_dbConnection);
-                EstadoRepositories er = new EstadoRepositories(_dbConnection);
-                UsuariosRepositories ur = new UsuariosRepositories(_dbConnection);
-                
-                List<FlujoDetalle> lstFlujoDetalle = new List<FlujoDetalle>();
-
-                var EnumFlujos = await GetAll();
-                var EnumTareas = await tr.GetAll();
-                var EnumEstados = await er.GetAll();
-                var EnumUsuarios = await ur.GetAll();
-
-                foreach (var flujo in EnumFlujos)
-                {
-                    FlujoDetalle flujoDetalle = new FlujoDetalle();
-                    flujoDetalle.Id_Flujo = flujo.Id_Flujo;
-                    flujoDetalle.Nombre = flujo.Nombre;
-                    flujoDetalle.Descripcion = flujo.Descripcion;
-
-                    foreach (var tarea in EnumTareas)
-                    {
-                        if (tarea.Id_Flujo == flujo.Id_Flujo)
-                        {
-                            TareaDeFlujo tareaDeFlujo = new TareaDeFlujo();
-                            tareaDeFlujo.Id_Tarea = tarea.Id_Tarea;
-                            tareaDeFlujo.Nombre = tarea.Nombre;
-                            tareaDeFlujo.Fecha_Inicio = tarea.Fecha_Inicio;
-                            tareaDeFlujo.Fecha_Termino = tarea.Fecha_Termino;
-                            tareaDeFlujo.Descripcion_Tarea = tarea.Descripcion_Tarea;
-                            tareaDeFlujo.Estado_Tarea = EnumEstados.Where(estado => estado.Id_Estado == tarea.Id_Estado).FirstOrDefault().Descripcion;
-                            tareaDeFlujo.Dias_Plazo = (tarea.Fecha_Termino - tarea.Fecha_Inicio).Days;
-
-                            var dias_retrazo = (DateTime.Now - tarea.Fecha_Termino).Days;
-
-                            tareaDeFlujo.Dias_Retrazo = dias_retrazo < 0 ? 0 : dias_retrazo;
-                            tareaDeFlujo.Comentario = "";
-                            tareaDeFlujo.Progreso = (((tarea.Fecha_Termino - DateTime.Now).Days * 100) / tareaDeFlujo.Dias_Plazo);
-
-                            foreach (var usuario in EnumUsuarios)
-                            {
-                                if (usuario.Id_Usuario == tarea.Id_Usuario)
-                                {
-                                    tareaDeFlujo.Usuario_Asignado.Id_Usuario = usuario.Id_Usuario;
-                                    tareaDeFlujo.Usuario_Asignado.Nombre = usuario.Nombre;
-                                    tareaDeFlujo.Usuario_Asignado.Apell_Paterno = usuario.Apell_Paterno;
-                                    tareaDeFlujo.Usuario_Asignado.Apell_Materno = usuario.Apell_Materno;
-                                    tareaDeFlujo.Usuario_Asignado.Correo = usuario.Correo;
-                                    tareaDeFlujo.Usuario_Asignado.Telefono = usuario.Telefono;
-                                }
-                                if (usuario.Id_Usuario == tarea.Id_Supervisor)
-                                {
-                                    tareaDeFlujo.Usuario_Supervisor.Id_Usuario = usuario.Id_Usuario;
-                                    tareaDeFlujo.Usuario_Supervisor.Nombre = usuario.Nombre;
-                                    tareaDeFlujo.Usuario_Supervisor.Apell_Paterno = usuario.Apell_Paterno;
-                                    tareaDeFlujo.Usuario_Supervisor.Apell_Materno = usuario.Apell_Materno;
-                                    tareaDeFlujo.Usuario_Supervisor.Correo = usuario.Correo;
-                                    tareaDeFlujo.Usuario_Supervisor.Telefono = usuario.Telefono;
-                                }
-                            }
-
-                            flujoDetalle.Tareas.Add(tareaDeFlujo);
-                        }
-                    }
-                    lstFlujoDetalle.Add(flujoDetalle);
-                }
-
-
-                return lstFlujoDetalle;
-                //string json = JsonConvert.SerializeObject(result, Formatting.Indented);
-
-                //return json;
+                var p = new OracleDynamicParameters();
+                p.Add("lista_flujo", dbType: OracleMappingType.RefCursor, direction: ParameterDirection.Output);
+                var result = await _dbConnection.QueryAsync<SP_FLUJO_GETALLDETALLE>("PKG_FLUJO.SP_FLUJO_GETALLDETALLE", p, commandType: CommandType.StoredProcedure);
+                return result;
             }
             catch (Exception ex)
             {
-                Console.WriteLine("ERROR : " + ex.Message);
-                string error = ex.Message;
-                return Enumerable.Empty<FlujoDetalle>();
+                string mensaje = ex.Message;
+                return Enumerable.Empty<SP_FLUJO_GETALLDETALLE> ();
             }
+
+
+            //try
+            //{
+            //    TareasRepositories tr = new TareasRepositories(_dbConnection);
+            //    EstadoRepositories er = new EstadoRepositories(_dbConnection);
+            //    UsuariosRepositories ur = new UsuariosRepositories(_dbConnection);
+                
+            //    List<FlujoDetalle> lstFlujoDetalle = new List<FlujoDetalle>();
+
+            //    var EnumFlujos = await GetAll();
+            //    var EnumTareas = await tr.GetAll();
+            //    var EnumEstados = await er.GetAll();
+            //    var EnumUsuarios = await ur.GetAll();
+
+            //    foreach (var flujo in EnumFlujos)
+            //    {
+            //        FlujoDetalle flujoDetalle = new FlujoDetalle();
+            //        flujoDetalle.Id_Flujo = flujo.Id_Flujo;
+            //        flujoDetalle.Nombre = flujo.Nombre;
+            //        flujoDetalle.Descripcion = flujo.Descripcion;
+
+            //        foreach (var tarea in EnumTareas)
+            //        {
+            //            if (tarea.Id_Flujo == flujo.Id_Flujo)
+            //            {
+            //                TareaDeFlujo tareaDeFlujo = new TareaDeFlujo();
+            //                tareaDeFlujo.Id_Tarea = tarea.Id_Tarea;
+            //                tareaDeFlujo.Nombre = tarea.Nombre;
+            //                tareaDeFlujo.Fecha_Inicio = tarea.Fecha_Inicio;
+            //                tareaDeFlujo.Fecha_Termino = tarea.Fecha_Termino;
+            //                tareaDeFlujo.Descripcion_Tarea = tarea.Descripcion_Tarea;
+
+            //                tareaDeFlujo.Dias_Plazo = (tarea.Fecha_Termino - tarea.Fecha_Inicio).Days;
+            //                if (tareaDeFlujo.Dias_Plazo < 0)
+            //                {
+            //                    tareaDeFlujo.Dias_Plazo = 0;
+            //                }
+
+            //                if (tarea.Id_Estado != 1) // Si la tarea nNO está terminada
+            //                {
+            //                    var dias_retrazo = (DateTime.Now - tarea.Fecha_Termino).Days;
+            //                    tareaDeFlujo.Dias_Retrazo = dias_retrazo < 0 ? 0 : dias_retrazo;
+
+            //                    if (tareaDeFlujo.Dias_Plazo <= 0)
+            //                    {
+            //                        tareaDeFlujo.Progreso = 100;
+            //                    }
+            //                    else if (tarea.Fecha_Inicio >= DateTime.Now)
+            //                    {
+            //                        tareaDeFlujo.Progreso = 0;
+            //                    }
+            //                    else if (tarea.Fecha_Termino >= DateTime.Now)
+            //                    {
+            //                        int dias = (tarea.Fecha_Termino - DateTime.Now).Days;
+            //                        tareaDeFlujo.Progreso = (dias * 100) / tareaDeFlujo.Dias_Plazo;
+            //                    }
+            //                    else if (tarea.Fecha_Termino < DateTime.Now)
+            //                    {
+            //                        // Significa que la tarea está atrasada si cae en esta condición
+            //                        // Se actualiza el estado de la tarea.
+            //                        // Solo si tiene estado Asignada o Aceptada
+            //                        if (tarea.Id_Estado == 6 || tarea.Id_Estado == 5)
+            //                        {
+            //                            tarea.Id_Tarea = 7; // Estado Atrasada
+            //                            await tr.Update(tarea);
+            //                        }
+
+            //                        tareaDeFlujo.Progreso = 100;
+            //                    }
+            //                    else
+            //                    {
+            //                        tareaDeFlujo.Progreso = 0.11111;
+            //                    }
+            //                }
+            //                else // Si la tarea SI está terminada
+            //                {
+            //                    tareaDeFlujo.Dias_Retrazo = 0;
+            //                    tareaDeFlujo.Progreso = 100;
+            //                }
+
+            //                tareaDeFlujo.Estado_Tarea = EnumEstados.Where(estado => estado.Id_Estado == tarea.Id_Estado).FirstOrDefault().Descripcion;
+            //                tareaDeFlujo.Comentario = "";
+
+                            
+
+            //                ListUser xlistUser = EnumUsuarios.FirstOrDefault(usuario => usuario.Id_Usuario == tarea.Id_Usuario);
+            //                ListUser xlistUserSupervisor = EnumUsuarios.FirstOrDefault(usuario => usuario.Id_Usuario == tarea.Id_Supervisor);
+                            
+            //                tareaDeFlujo.Usuario_Asignado.Id_Usuario = xlistUser.Id_Usuario;
+            //                tareaDeFlujo.Usuario_Asignado.Nombre = xlistUser.Nombre;
+            //                tareaDeFlujo.Usuario_Asignado.Apell_Paterno = xlistUser.Apell_Paterno;
+            //                tareaDeFlujo.Usuario_Asignado.Apell_Materno = xlistUser.Apell_Materno;
+            //                tareaDeFlujo.Usuario_Asignado.Correo = xlistUser.Correo;
+            //                tareaDeFlujo.Usuario_Asignado.Telefono = xlistUser.Telefono;
+
+            //                tareaDeFlujo.Usuario_Supervisor.Id_Usuario = xlistUserSupervisor.Id_Usuario;
+            //                tareaDeFlujo.Usuario_Supervisor.Nombre = xlistUserSupervisor.Nombre;
+            //                tareaDeFlujo.Usuario_Supervisor.Apell_Paterno = xlistUserSupervisor.Apell_Paterno;
+            //                tareaDeFlujo.Usuario_Supervisor.Apell_Materno = xlistUserSupervisor.Apell_Materno;
+            //                tareaDeFlujo.Usuario_Supervisor.Correo = xlistUserSupervisor.Correo;
+            //                tareaDeFlujo.Usuario_Supervisor.Telefono = xlistUserSupervisor.Telefono;
+
+            //                flujoDetalle.Tareas.Add(tareaDeFlujo);
+            //            }
+            //        }
+            //        lstFlujoDetalle.Add(flujoDetalle);
+            //    }
+
+
+            //    return lstFlujoDetalle;
+            //    //string json = JsonConvert.SerializeObject(result, Formatting.Indented);
+
+            //    //return json;
+            //}
+            //catch (Exception ex)
+            //{
+            //    Console.WriteLine("ERROR : " + ex.Message);
+            //    string error = ex.Message;
+            //    return Enumerable.Empty<FlujoDetalle>();
+            //}
         }
 
         public Task<IEnumerable<Flujo>> Read(int Id)

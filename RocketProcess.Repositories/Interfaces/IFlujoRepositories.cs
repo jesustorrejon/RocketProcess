@@ -11,6 +11,6 @@ namespace RocketProcess.Repositories.Interfaces
 {
     public interface IFlujoRepositories
     {
-        Task<IEnumerable<FlujoDetalle>> GetAllDetalle();
+        Task<IEnumerable<SP_FLUJO_GETALLDETALLE>> GetAllDetalle();
     }
 }

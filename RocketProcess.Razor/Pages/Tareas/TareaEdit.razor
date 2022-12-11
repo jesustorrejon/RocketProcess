@@ -1,0 +1,200 @@
+﻿@page "/Tarea/Editar/{Id_Tarea:int}"
+@using RocketProcess.Shared.Modelos.ModelTarea
+@inject ITareasServices TareasServices
+@inject IEstadoServices EstadoServices
+@attribute [Authorize]
+
+<PageTitle>Editar Tarea</PageTitle>
+
+@if (tarea is null)
+{
+    <MudProgressCircular Indeterminate="true" />
+}
+else
+{
+    <div class="container">
+
+        <div class="row mb-3">
+            <MudText Class="col-3">Supervisor: <b>@(tarea.SUPERVISOR_NOMBRE.ToUpper())</b></MudText>
+            <MudText Class="col-3">Responsable: <b>@(tarea.USUARIO_NOMBRE.ToUpper())</b></MudText>
+        </div>
+
+
+        <div class="row">
+            @if (tarea.ID_AREA != 0)
+            {
+                <div class="col-3 mt-3">
+
+                    <MudTextField T="string" Class="form-control"
+                          @bind-Value="tarea.AREA_NEGOCIO_TIPO_AREA"
+                          Label="Area de negocio"
+                          Variant="Variant.Outlined" Disabled="true" />
+                </div>
+            }
+
+            @if (tarea.ID_FLUJO != 0)
+            {
+                <div class="col-3 mt-3">
+                    <MudTextField T="string" Class="form-control"
+                          @bind-Value="tarea.FLUJO_NOMBRE"
+                          Label="Flujo"
+                          Variant="Variant.Outlined" Disabled="true" />
+                </div>
+            }
+
+            <div class="col-3 mt-3 d-flex text-center align-items-center">
+                <_Semaforo Id_Estado="@tarea.ID_ESTADO" />
+            </div>
+
+            @if (tarea.ID_TAREA_PRINCIPAL > 0)
+            {
+                <div class="col-9 mt-3">
+                    <MudTextField T="string" Class="form-control"
+                          @bind-Value="tarea.TAREA_PRINCIPAL_NOMBRE"
+                          Label="Tarea principal"
+                          Variant="Variant.Outlined" Disabled="true" ReadOnly="true" />
+                </div>
+            }
+
+
+
+            <div class="col-6 mt-3">
+                <MudTextField T="string" Class="form-control"
+                          @bind-Value="tarea.NOMBRE"
+                          Label="Nombre de tarea"
+                          Variant="Variant.Outlined" Disabled="@Desactivar_Modificacion" />
+            </div>
+
+            <AuthorizeView Roles="Administrador,Supervisor">
+                <Authorized>
+                    <div class="col-3 mt-3">
+                        <MudSelect T="int" Variant="Variant.Outlined" Placeholder="Selecciona un rol" @bind-Value="tarea.ID_ESTADO">
+                            @foreach (var estado in EnumEstados)
+                            {
+                                <MudSelectItem T="int" Value="@estado.Id_Estado">@estado.Descripcion</MudSelectItem>
+                            }
+                        </MudSelect>
+                    </div>
+                </Authorized>
+                <NotAuthorized>
+                    <div class="col-3 mt-3">
+                        <MudTextField T="string" Class="form-control"
+                                  @bind-Value="tarea.ESTADO_TAREA_DESCRIPCION"
+                                  Label="Estado"
+                                  Variant="Variant.Outlined" Disabled="@Desactivar_Modificacion" />
+                    </div>
+                </NotAuthorized>
+            </AuthorizeView>
+            
+        </div>
+
+        <div class="row mt-3">
+            <div class="col-3">
+                <MudDatePicker Label="Fecha Inicio" Disabled="@Desactivar_Modificacion" Class="form-control" DateChanged="((fecha) => ActualizarDiasPlazo(fecha,1))" Date="tarea.FECHA_INICIO" />
+            </div>
+            <div class="col-3">
+                <MudDatePicker Label="Fecha Termino" Disabled="@Desactivar_Modificacion" Class="form-control" DateChanged="((fecha) => ActualizarDiasPlazo(fecha,2))"  Date="tarea.FECHA_TERMINO" />
+            </div>
+            <div class="col-3">
+                <MudTextField T="int" Class="form-control" Value="@Dias_Plazo"
+                          Label="Dias de plazo"
+                          Variant="Variant.Outlined" Disabled="true" ReadOnly="true" />
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-9">
+                <MudTextField T="string" Class="form-control"
+                          @bind-Value="tarea.DESCRIPCION_TAREA"
+                          Label="Descripción"
+                          Variant="Variant.Outlined" Lines="10" />
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-9">
+                <div class="d-flex mt-3">
+
+                    <MudButton Variant="Variant.Filled" Color="Color.Info" Class="mr-3" OnClick="Volver">Volver</MudButton>
+                    <MudButton Variant="Variant.Filled" Color="Color.Primary" Class="mr-3" OnClick="VerHistorial">Historial</MudButton>
+                    <MudSpacer />
+                    <MudButton Variant="Variant.Filled" Color="Color.Primary" Class="mr-3" OnClick="Comentar">Comentar</MudButton>
+                    <MudButton Variant="Variant.Filled" Color="Color.Primary" Class="mr-3" OnClick="Rechazar">Rechazar</MudButton>
+                    <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="Guardar">Guardar</MudButton>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+
+
+@code {
+    [CascadingParameter]
+    private Task<AuthenticationState> authenticationState { get; set; }
+
+    [Parameter] public int Id_Tarea { get; set; }
+
+    IEnumerable<Estado> EnumEstados;
+
+    SP_TAREA_GET tarea { get; set; }
+    string rol;
+    int Dias_Plazo { get; set; } = 0;
+
+    bool Desactivar_Modificacion = true;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var Auth = await authenticationState;
+        rol = Auth.User.Claims.FirstOrDefault(x => x.Type == "http://schemas.microsoft.com/ws/2008/06/identity/claims/role").Value;
+
+        if (rol.ToLower() == "administrador" || rol.ToLower() == "supervisor")
+        {
+            Desactivar_Modificacion = false;
+            EnumEstados = await EstadoServices.GetAll();
+        }
+
+        Dias_Plazo = tarea is null ? 0 : (tarea.FECHA_TERMINO - tarea.FECHA_INICIO).Days;
+        var EnumTarea = await TareasServices.Read(Id_Tarea);
+        tarea = EnumTarea.FirstOrDefault();
+
+    }
+
+    protected async Task ActualizarDiasPlazo(DateTime? captura, int opcion)
+    {
+        if (opcion == 1 && captura is not null)
+        {
+            tarea.FECHA_INICIO = captura.Value;
+        }
+        else
+        {
+            tarea.FECHA_TERMINO = captura.Value;
+        }
+
+        Dias_Plazo = tarea is null ? 0 : (tarea.FECHA_TERMINO - tarea.FECHA_INICIO).Days;
+        
+    }
+
+    protected async Task Guardar()
+    {
+
+    }
+
+    protected async Task VerHistorial()
+    {
+
+    }
+
+    protected async Task Rechazar()
+    {
+
+    }
+
+    protected async Task Comentar()
+    {
+
+    }
+
+    protected async Task Volver()
+    {
+        NM.NavigateTo("Tareas");
+    }
+}

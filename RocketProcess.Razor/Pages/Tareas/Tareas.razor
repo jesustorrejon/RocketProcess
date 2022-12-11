@@ -1,53 +1,53 @@
 ﻿@page "/Tareas"
-@attribute [Authorize(Roles = "Administrador, User")]
 
-@*<RocketProcess.Razor.Pages.Estandar.Grilla>
-    <Encabezado></Encabezado>
-</RocketProcess.Razor.Pages.Estandar.Grilla>*@
-@*<div class="container p-0 contenedor-tabla">
-    <div class="table-responsive">
-        <table class="table table-striped table-hover @CssClass">
-            <thead>
-                <tr>
-                    <th @onclick="Ordenar" scope="col">Numero</th>
-                </tr>
-                <tr>
-                    <th scope="col"><MudTextField OnKeyDown="(e) => Buscar(e)" Clearable="true" ValueChanged="(e) => Buscar(xbusqueda: e)" T="string" Placeholder="Buscar..." Immediate="true" Value="busqueda" /></th>
-                </tr>
-                
-            </thead>
-            <tbody>
-                <Virtualize Items="lista_temporal" Context="String">
-                    <tr scope="row" @onclick="() => Capturar(String)">
-                        <td>@String</td>
-                    </tr>
-                </Virtualize>
+@inject ITareasServices TareasServices
+@inject NavigationManager NM
+@attribute [Authorize]
 
-
-            </tbody>
-        </table>
-    </div>
-</div>*@
-<Grilla Virtualize="true" Buscador="true" Items="lista" T="string" CapturarFila="Capturar">
+@*<Grilla Virtualize="true" Buscador="true" Items="lista" T="string" CapturarFila="Capturar">
     <Encabezado>
         <th scope="col">ID</th>
     </Encabezado>
     <Fila>
         <tr>@context</tr>
     </Fila>
-</Grilla>
+</Grilla>*@
 
-
+<h3 class="text-center pb-3">Tareas</h3>
+    <MudDataGrid Outlined="true" Hover="true" T="Tarea" Items="@EnumTareas" Virtualize="true" FixedHeader="true" Height="350px"
+             Filterable="true" FilterMode="@DataGridFilterMode.ColumnFilterRow" Loading="@(EnumTareas is null)">
+        <Columns>
+        <Column T="Tarea" Field="Id_Tarea" Title="#" />
+        <Column T="Tarea" Field="Nombre" />
+        <Column Sortable="false" T="Tarea" Field="Fecha_Inicio" />
+        <Column Sortable="false" T="Tarea" Field="Fecha_Termino" />
+        <Column Sortable="false" T="Tarea" CellClass="d-flex justify-end">
+            <CellTemplate>
+                    <MudIconButton Size="@Size.Small" Icon="@Icons.Outlined.Edit" OnClick="@(e => Modificar(context.Item))" />
+                    <MudIconButton Size="@Size.Small" Icon="@Icons.Material.Filled.Delete" OnClick="@(e => Eliminar(context.Item))" />
+            </CellTemplate>
+            </Column>
+        </Columns>
+    </MudDataGrid>
+    <MudCardActions Class="align-items-center pt-2 row flex-row-reverse">
+        <MudButton Class="col-lg-2 col-md-2 col-sm-12 col-xs-12 ml-5 mt-2 btn btn-info" OnClick="Agregar" Variant="Variant.Filled" Color="Color.Info" StartIcon="fas fa-user-plus">
+            <MudText Class="pl-2">Agregar</MudText>
+        </MudButton>
+    </MudCardActions>
 
 @code {
     List<string> lista;
+    IEnumerable<Tarea> EnumTareas;
     int cantidadRegistros = 50000;
 
-    protected override void OnInitialized()
+    protected override async Task OnInitializedAsync()
     {
+        EnumTareas = await TareasServices.GetAll();
         lista = new List<string>();
-        lista = ObtenerRegistros(0, cantidadRegistros);
+        //lista = ObtenerRegistros(0, cantidadRegistros);
     }
+
+
 
     private void GenerarRegistros(){
         lista = ObtenerRegistros(0, cantidadRegistros);
@@ -80,6 +80,43 @@
 
     void Capturar(string registro){
         string reg = registro;
+    }
+
+    private async Task Modificar(object xTarea)
+    {
+        NM.NavigateTo($"Tarea/Editar/{(xTarea as Tarea).Id_Tarea}");
+        //var p = new DialogParameters();
+        //var options = new DialogOptions { CloseOnEscapeKey = true, DisableBackdropClick = true };
+        //p.Add("usuario", xUsuario);
+        //var dialog = DialogService.Show<FlujoEdit>("", p, options);
+        //var result = await dialog.Result;
+        //if (!result.Cancelled)
+        //{
+        //    Enumusuarios = await FlujosServices.GetAll();
+        //    StateHasChanged();
+        //}
+
+    }
+
+    private async void Eliminar(object xUsuario)
+    {
+        //var p = new DialogParameters();
+        //var options = new DialogOptions { CloseOnEscapeKey = true, DisableBackdropClick = true };
+        //p.Add("usuario", xUsuario);
+        //var dialog = DialogService.Show<FlujoDelete>("", p, options);
+        //var result = await dialog.Result;
+
+        //if (!result.Cancelled)
+        //{
+        //    await FlujosServices.Delete((xUsuario as ListUser).Id_Usuario);
+        //}
+    }
+
+    protected async Task Agregar()
+    {
+        //var p = new DialogParameters();
+        //var options = new DialogOptions { CloseOnEscapeKey = true, DisableBackdropClick = true };
+        //DialogService.Show<FlujoAdd>("Agregar", p, options);
     }
     
 }

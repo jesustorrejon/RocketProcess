@@ -2,6 +2,7 @@
 @using RocketProcess.Shared.Entidades
 @inject IDialogService DialogService
 @inject IRoleServices RoleServices
+@attribute [Authorize]
 
 <h3 class="text-center pb-3">Roles</h3>
 @*@if (rol is null || EnumRoles is null)

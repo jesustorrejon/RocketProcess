@@ -1,6 +1,7 @@
 ﻿using RocketProcess.Repositories.Interfaces;
 using RocketProcess.Repositories.Repositories;
 using RocketProcess.Shared.Modelos;
+using RocketProcess.Shared.Seguridad;
 using System.Data;
 
 namespace RocketProcess.Server.Authentication
@@ -38,7 +39,7 @@ namespace RocketProcess.Server.Authentication
         public async Task<UserAccount>? GetUserAccountByUserName(string correo, string password)
         {
             var usuario = await _loginRepositories.Conectar(correo, password);
-            _login = usuario.FirstOrDefault(x => x.correo == correo);
+            _login = usuario.FirstOrDefault(x => x.correo.ToUpper() == correo.ToUpper());
 
             if (_login == null)
                 return null;

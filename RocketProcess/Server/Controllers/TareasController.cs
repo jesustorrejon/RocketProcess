@@ -5,6 +5,7 @@ using RocketProcess.Repositories.Repositories;
 using RocketProcess.Shared;
 using RocketProcess.Shared.Entidades;
 using RocketProcess.Shared.Modelos;
+using RocketProcess.Shared.Modelos.ModelTarea;
 
 namespace RocketProcess.Server.Controllers
 {
@@ -30,9 +31,9 @@ namespace RocketProcess.Server.Controllers
         }
 
         [HttpGet]
-        public async Task<IEnumerable<Tarea>> Read([FromQuery] int Id_Tarea)
+        public async Task<IEnumerable<SP_TAREA_GET>> Read([FromQuery] int Id_Tarea)
         {
-            return await CRUD.Read(Id_Tarea);
+            return await _tareasRepositories.Read(Id_Tarea);
         }
 
         [HttpGet]
@@ -44,7 +45,7 @@ namespace RocketProcess.Server.Controllers
 
         [HttpGet]
         [Route("detalle")]
-        public async Task<IEnumerable<Tarea>> GetAllDetalle()
+        public async Task<IEnumerable<TareaDetalle>> GetAllDetalle()
         {
             return await _tareasRepositories.GetAllDetalle();
         }

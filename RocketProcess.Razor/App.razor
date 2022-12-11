@@ -1,11 +1,24 @@
-﻿<CascadingAuthenticationState>
+﻿@inject NavigationManager nm
+
+<CascadingAuthenticationState>
     <Router AppAssembly="@typeof(App).Assembly">
         <Found Context="routeData">
-            <AuthorizeRouteView RouteData="@routeData" DefaultLayout="@typeof(MainLayout)" />
+            <AuthorizeRouteView RouteData="@routeData" DefaultLayout="@typeof(MainLayout)">
+                <NotAuthorized>
+                    <PageTitle>
+                        No autorizado
+                    </PageTitle>
+                    <div class="container text-center">
+                        <p>Usted no está autorizado para ver el contenido.</p>
+                        <p>Debe iniciar sesión.</p>
+                    </div>
+                    <_Login></_Login>
+                </NotAuthorized>
+            </AuthorizeRouteView>
             <FocusOnNavigate RouteData="@routeData" Selector="h1" />
         </Found>
         <NotFound>
-            <PageTitle>No Existe</PageTitle>
+            <PageTitle>La página no existe</PageTitle>
             <LayoutView Layout="@typeof(MainLayout)">
                 <p role="alert">Lo siento, está pagina no existe.</p>
             </LayoutView>

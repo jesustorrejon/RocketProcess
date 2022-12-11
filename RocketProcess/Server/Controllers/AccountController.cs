@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using RocketProcess.Server.Authentication;
 using RocketProcess.Shared.Modelos;
+using RocketProcess.Shared.Seguridad;
 
 namespace RocketProcess.Server.Controllers
 {
@@ -23,7 +24,7 @@ namespace RocketProcess.Server.Controllers
         public ActionResult<UserSession> Login([FromBody] LoginRequest loginRequest)
         {
             var jwtAuthenticationManager = new JwtAutheticationManager(_userAccountService);
-            var userSession = jwtAuthenticationManager.GenerateJwtToken(loginRequest.Correo, loginRequest.Password);
+            var userSession = jwtAuthenticationManager.GenerateJwtToken(loginRequest.Correo.Trim(), loginRequest.Password);
 
             if (userSession == null)
                 return Unauthorized();

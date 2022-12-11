@@ -31,6 +31,9 @@ namespace RocketProcessDesktop
             serviceCollection.AddScoped<ILoginServices, LoginServices>();
             serviceCollection.AddScoped<IUserServices, UserServices>();
             serviceCollection.AddScoped<IRoleServices, RoleServices>();
+            serviceCollection.AddScoped<IFlujosServices, FlujosServices>();
+            serviceCollection.AddScoped<ITareasServices, TareasServices>();
+            serviceCollection.AddScoped<IEstadoServices, EstadoServices>();
             serviceCollection.AddBlazoredSessionStorage();
             serviceCollection.AddScoped<AuthenticationStateProvider, CustomAuthenticationStateProvider>();
             serviceCollection.AddAuthorizationCore();

@@ -10,5 +10,6 @@ namespace RocketProcess.Shared.Entidades
     {
         public int Id_Estado { get; set; }
         public string Descripcion { get; set; }
+        public string Color { get; set; }
     }
 }

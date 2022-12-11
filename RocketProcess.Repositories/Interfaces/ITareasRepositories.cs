@@ -11,5 +11,6 @@ namespace RocketProcess.Repositories.Interfaces
     public interface ITareasRepositories
     {
         public Task<IEnumerable<TareaDetalle>> GetAllDetalle();
+        public Task<IEnumerable<SP_TAREA_GET>> Read(int id);
     }
 }

@@ -2,6 +2,7 @@
 @using RocketProcess.Razor.Authentication
 @inject IUserServices UserServices
 @inject IDialogService DialogService
+@attribute [Authorize]
 
 @*@if (Enumusuarios is null)
 {
