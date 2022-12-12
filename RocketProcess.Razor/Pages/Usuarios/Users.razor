@@ -2,7 +2,7 @@
 @using RocketProcess.Razor.Authentication
 @inject IUserServices UserServices
 @inject IDialogService DialogService
-@attribute [Authorize]
+@attribute [Authorize(Roles = "Administrador")]
 
 @*@if (Enumusuarios is null)
 {
@@ -56,7 +56,7 @@ else{*@
         p.Add("usuario", xUsuario);
         var dialog = DialogService.Show<UserEdit>("",p, options);
         var result = await dialog.Result;
-        if(!result.Cancelled)
+        if((bool)result.Data)
         {
             Enumusuarios = await UserServices.GetAll();
             StateHasChanged();
@@ -72,9 +72,14 @@ else{*@
         var dialog = DialogService.Show<UserDelete>("", p, options);
         var result = await dialog.Result;
 
-        if (!result.Cancelled)
+        if ((bool)result.Data)
         {
-            await UserServices.Delete((xUsuario as ListUser).Id_Usuario);
+            var response = await UserServices.Delete((xUsuario as ListUser).Id_Usuario);
+            if (response.Result.Success)
+            {
+                Enumusuarios = await UserServices.GetAll();
+                StateHasChanged();
+            }
         }
     }
 
@@ -82,7 +87,14 @@ else{*@
     {
         var p = new DialogParameters();
         var options = new DialogOptions { CloseOnEscapeKey = true, DisableBackdropClick = true };
-        DialogService.Show<UserAdd>("Agregar", p, options);
+        var dialog = DialogService.Show<UserAdd>("Agregar", p, options);
+        var result = await dialog.Result;
+
+        if((bool)result.Data)
+        {
+            Enumusuarios = await UserServices.GetAll();
+            StateHasChanged();
+        }    
     }
 
     void ApplyFilter(FilterContext<Usuario> context)

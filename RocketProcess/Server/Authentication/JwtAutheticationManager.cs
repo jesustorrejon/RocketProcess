@@ -34,6 +34,7 @@ namespace RocketProcess.Server.Authentication
 
             var claimsIdentity = new ClaimsIdentity(new List<Claim>
             {
+                new Claim("Id", userAcoount.Id.ToString()),
                 new Claim(ClaimTypes.Name, userAcoount.UserName),
                 new Claim(ClaimTypes.Role, userAcoount.Role),
             });
@@ -56,6 +57,7 @@ namespace RocketProcess.Server.Authentication
             //Retornarmos el objeto UserSession
             var userSession = new UserSession
             {
+                Id = userAcoount.Id,
                 UserName = userAcoount.UserName,
                 Role = userAcoount.Role,
                 Token = token,

@@ -5,6 +5,7 @@ using Oracle.ManagedDataAccess.Client;
 using RocketProcess.Repositories.Interfaces;
 using RocketProcess.Repositories.Repositories;
 using RocketProcess.Server.Authentication;
+using RocketProcess.Services.Servicios.Interfaces;
 using RocketProcess.Shared.Entidades;
 using System.Data;
 using System.Text;
@@ -45,6 +46,8 @@ builder.Services.AddScoped<ICRUD<Tarea>, TareasRepositories>();
 builder.Services.AddScoped<ICRUD<Estado>, EstadoRepositories>();
 builder.Services.AddScoped<ITareasRepositories, TareasRepositories>();
 builder.Services.AddScoped<IFlujoRepositories, FlujoRepositories>();
+builder.Services.AddScoped<ICRUD<Flujo>, FlujoRepositories>();
+builder.Services.AddScoped<ICRUD<Area_Negocio>, AreaNegocioRepositories>();
 
 var app = builder.Build();
 

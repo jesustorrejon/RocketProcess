@@ -17,8 +17,13 @@
 @using RocketProcess.Shared.Seguridad
 @using Microsoft.AspNetCore.Components.Authorization
 @using Microsoft.AspNetCore.Authorization
+@using System.Net.Http.Headers
 
+@inject IDialogService DialogService
 @inject NavigationManager NM
+@inject HttpClient Http
+@inject AuthenticationStateProvider authenticationStateProvider
+
 
 @*Vistas*@
 @using RocketProcess.Razor.Pages.Estandar

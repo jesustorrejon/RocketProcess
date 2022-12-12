@@ -8,11 +8,16 @@
 <MudDialogProvider />
 <MudSnackbarProvider />
 
+<style>
+    .mud-drawer.mud-drawer-pos-left.mud-drawer--open.mud-drawer-md.mud-drawer-clipped-always.mud-elevation-1.mud-drawer-temporary{
+        position: fixed !important;
+    }
+</style>
 
 <div>
     @*<MudDrawerContainer>*@
         <MudMainContent>
-        <MudDrawer Style="background-color: #03009F; color: white" @bind-Open="@open" DisableOverlay="false" Elevation="1" Anchor="Anchor.Left" ClipMode="DrawerClipMode.Always" Variant="@DrawerVariant.Temporary">
+        <MudDrawer Style="background-color: #03009F; color: white" @bind-Open="@open" DisableOverlay="false" Elevation="1" Anchor="Anchor.Left" Fixed="false" ClipMode="DrawerClipMode.Always" Variant="@DrawerVariant.Temporary">
             <MudDrawerHeader>
                 <div class="d-flex align-middle align-items-center">
                     <MudText Typo="Typo.h5" class="">Rocket Process</MudText>
@@ -27,11 +32,17 @@
                 <MudNavLink Href="/" Icon="fas fa-home" IconColor="Color.Info" Style="color: white">Inicio</MudNavLink>
                 <MudNavLink Href="/Tareas" Icon="fas fa-edit" IconColor="Color.Info" Style="color: white">Tareas</MudNavLink>
                 <MudNavLink Href="/Flujos" Icon="fas fa-diagram-project" IconColor="Color.Info" Style="color: white">Flujos</MudNavLink>
-                <MudNavLink Href="/Avance" Icon="fas fa-calculator" IconColor="Color.Info" Style="color: white">Calcular Avance</MudNavLink>
-                <MudNavGroup Title="Seguridad" Icon="fas fa-cogs" IconColor="Color.Info">
-                    <MudNavLink Href="/users" Icon="fas fa-users" IconColor="Color.Primary">Usuarios</MudNavLink>
-                    <MudNavLink Href="/roles" Icon="fas fa-sitemap" IconColor="Color.Primary">Roles</MudNavLink>
-                </MudNavGroup>
+                @*<MudNavLink Href="/Avance" Icon="fas fa-calculator" IconColor="Color.Info" Style="color: white">Calcular Avance</MudNavLink>*@
+                
+                <AuthorizeView Roles="Administrador">
+                    <Authorized>
+                        <MudNavGroup Title="Seguridad" Icon="fas fa-cogs" IconColor="Color.Info">
+                            <MudNavLink Href="/users" Icon="fas fa-users" IconColor="Color.Primary">Usuarios</MudNavLink>
+                            <MudNavLink Href="/roles" Icon="fas fa-sitemap" IconColor="Color.Primary">Roles</MudNavLink>
+                        </MudNavGroup>
+                    </Authorized>
+                </AuthorizeView>
+                
                 <MudNavLink Href="/Acerca" Icon="fas fa-info" IconColor="Color.Info" Style="color: white">Acerca de Rocket</MudNavLink>
             </MudNavMenu>
         </MudDrawer>
@@ -47,10 +58,17 @@
                 <MudIconButton Icon="@Icons.Custom.Brands.GitHub" Title="Sobre mí" Color="Color.Inherit" Link="https://github.com/jesustorrejon" Target="_blank" />
             <AuthorizeView>
                 <Authorized>
-                    <a @onclick="Logout" href="javascript:void(0)">Logout</a>
+                    <MudText Class="mr-3">Bienvenido, @(context.User.Identity.Name.Substring(0, 1).ToUpper() + context.User.Identity.Name.Substring(1))</MudText>
+                    
+                    <a style="color: white" @onclick="Logout" href="javascript:void(0)">
+                        <MudIcon Icon="fas fa-power-off" Color="Color.Error" />
+                        </a>
                 </Authorized>
                 <NotAuthorized>
-                    <a href="/login">Login</a>
+                        <a class="d-flex" style="color: white" href="/login">
+                            <MudText Class="mr-3">Ingresar</MudText>
+                            <MudIcon Icon="fas fa-power-off" Color="Color.Success" />
+                            </a>
                 </NotAuthorized>
             </AuthorizeView>
             </MudAppBar>

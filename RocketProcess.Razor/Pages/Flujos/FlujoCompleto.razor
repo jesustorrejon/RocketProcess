@@ -1,0 +1,65 @@
+﻿@*@page "/Flujo/Detalle/{id_Flujo:int}"*@
+@using RocketProcess.Shared.Modelos.ModelFlujo
+@using RocketProcess.Shared.Modelos.ModelTarea
+@inject IFlujosServices FlujosServices
+@inject NavigationManager NM
+
+<h3>Tareas de flujo</h3>
+
+<MudDataGrid Outlined="true" Hover="true" T="TareaDeFlujo" Items="@lstTareas" Virtualize="true" FixedHeader="true" Height="350px"
+             Filterable="true" FilterMode="@DataGridFilterMode.ColumnFilterRow" Loading="@(lstTareas is null)">
+    <Columns>
+        <Column T="TareaDeFlujo" Field="Id_Tarea" Title="#" />
+        <Column T="TareaDeFlujo" Field="Nombre" />
+        <Column T="TareaDeFlujo" Field="Estado_Tarea" />
+        <Column T="TareaDeFlujo" Field="Dias_Plazo" />
+        <Column Sortable="false" T="TareaDeFlujo" CellClass="d-flex justify-end">
+            <CellTemplate>
+                <MudIconButton Size="@Size.Small" Icon="@Icons.Outlined.PanoramaFishEye" OnClick="@(e => Ver(context.Item))" />
+            </CellTemplate>
+        </Column>
+    </Columns>
+</MudDataGrid>
+
+@code {
+    [CascadingParameter]
+    private Task<AuthenticationState> authenticationState { get; set; }
+
+    [Parameter]
+    public int id_Flujo { get; set; }
+
+    [Parameter]
+    public List<FlujoDetalle> lstFlujos { get; set; } = new List<FlujoDetalle>();
+
+    List<TareaDeFlujo> lstTareas { get; set; } = new List<TareaDeFlujo>();
+
+    public int id_Usuario { get; set; }
+
+    SP_FILTRA_USUARIO_ROL sP_FILTRA_USUARIO_ROL;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var Auth = await authenticationState;
+        id_Usuario = Convert.ToInt32(Auth.User.Claims.FirstOrDefault(x => x.Type == "Id").Value);
+
+        //var result = await FlujosServices.GetDetalle(id_Usuario);
+        OrdenarTareas();
+    }
+
+    protected void OrdenarTareas(){
+        foreach (var flujo in lstFlujos.Where( x => x.Id_Flujo == id_Flujo))
+        {
+            foreach (var tarea in flujo.Tareas)
+            {
+                lstTareas.Add(tarea);
+            }
+        }
+
+
+    }
+
+    private void Ver(object xTarea)
+    {
+        NM.NavigateTo($"Tarea/Editar/{(xTarea as TareaDeFlujo).Id_Tarea}");
+    }
+}

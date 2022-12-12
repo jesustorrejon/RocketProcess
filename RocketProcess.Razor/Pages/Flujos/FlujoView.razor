@@ -3,24 +3,47 @@
 @inject IFlujosServices FlujosServices
 @inject IDialogService DialogService
 
-<h3>Flujos</h3>
 
-<MudDataGrid Outlined="true" Hover="true" T="FlujoDetalle" Items="@EnumFlujos" Virtualize="true" FixedHeader="true" Height="350px"
+@if (opcion == 1)
+{
+    <h3>Flujos</h3>
+    <MudDataGrid Outlined="true" Hover="true" T="FlujoDetalle" Items="@lstFlujos" Virtualize="true" FixedHeader="true" Height="350px"
              Filterable="true" FilterMode="@DataGridFilterMode.ColumnFilterRow" Loading="@(EnumFlujos is null)">
-    <Columns>
-        <Column T="FlujoDetalle" Field="Id_Flujo" Title="#" />
-        <Column T="FlujoDetalle" Field="Nombre" />
-        <Column T="FlujoDetalle" Field="Descripcion" />
-    </Columns>
-</MudDataGrid>
-<MudCardActions Class="align-items-center pt-2 row flex-row-reverse">
-    <MudButton Class="col-lg-2 col-md-2 col-sm-12 col-xs-12 ml-5 mt-2 btn btn-info" OnClick="Agregar" Variant="Variant.Filled" Color="Color.Info" StartIcon="fas fa-user-plus">
-        <MudText Class="pl-2">Agregar</MudText>
-    </MudButton>
-</MudCardActions>
+        <Columns>
+            <Column T="FlujoDetalle" Field="Id_Flujo" Title="#" />
+            <Column T="FlujoDetalle" Field="Nombre" />
+            <Column T="FlujoDetalle" Field="Descripcion" />
+            <Column Sortable="false" T="FlujoDetalle" CellClass="d-flex justify-end">
+            <CellTemplate>
+                    <MudIconButton Size="@Size.Small" Icon="@Icons.Outlined.Edit" OnClick="@(e => Ver(context.Item))" />
+                    <MudIconButton Size="@Size.Small" Icon="@Icons.Material.Filled.Delete" OnClick="@(e => Eliminar(context.Item))" />
+            </CellTemplate>
+            </Column>
+        </Columns>
+    </MudDataGrid>
+    <MudCardActions Class="align-items-center pt-2 row flex-row-reverse">
+        <MudButton Class="col-lg-2 col-md-2 col-sm-12 col-xs-12 ml-5 mt-2 btn btn-info" OnClick="Agregar" Variant="Variant.Filled" Color="Color.Info" StartIcon="fas fa-user-plus">
+            <MudText Class="pl-2">Agregar</MudText>
+        </MudButton>
+    </MudCardActions>
+}
+else
+{
+    <FlujoCompleto lstFlujos="lstFlujos" id_Flujo="id_Flujo" />
+    <MudButton OnClick="Volver" Color="Color.Info">Volver</MudButton>
+}
+
 
 @code {
+    [CascadingParameter]
+    private Task<AuthenticationState> authenticationState { get; set; }
+    int id_Usuario;
+    int id_Flujo;
+    int opcion = 1;
+
     private IEnumerable<FlujoDetalle> EnumFlujos = new List<FlujoDetalle>();
+    List<FlujoDetalle> lstFlujos = new List<FlujoDetalle>();
+    List<TareaDeFlujo> lstTareas = new List<TareaDeFlujo>();
     DialogOptions dialog = new DialogOptions { CloseButton = false, NoHeader = true };
 
     HashSet<Usuario> _selectedItems = new();
@@ -29,11 +52,43 @@
 
     protected async override Task OnInitializedAsync()
     {
+        var Auth = await authenticationState;
+        id_Usuario = Convert.ToInt32(Auth.User.Claims.FirstOrDefault(x => x.Type == "Id").Value);
+
         EnumFlujos = await FlujosServices.ObtenerFlujos();
+
+        string rol = Auth.User.Claims.FirstOrDefault(x => x.Type == "http://schemas.microsoft.com/ws/2008/06/identity/claims/role").Value;
+
+        if (rol.ToLower() == "administrador")
+        {
+            lstFlujos.AddRange(EnumFlujos);
+        }
+        else
+        {
+            foreach (var flujo in EnumFlujos)
+            {
+                FlujoDetalle fd = new FlujoDetalle();
+                fd.Id_Flujo = flujo.Id_Flujo;
+                fd.Nombre = flujo.Nombre;
+                fd.Descripcion = flujo.Descripcion;
+
+                foreach (var tarea in flujo.Tareas.Where(t => t.Usuario_Asignado.Id_Usuario == id_Usuario || t.Usuario_Supervisor.Id_Usuario == id_Usuario))
+                {
+                    lstTareas.Add(tarea);
+                }
+
+                fd.Tareas.AddRange(lstTareas);
+                lstFlujos.Add(fd);
+                lstTareas.Clear();
+            }
+        }
+        
     }
 
-    private async Task Modificar(object xUsuario)
+    private async Task Ver(object xFlujo)
     {
+        opcion = 2;
+        id_Flujo = (xFlujo as FlujoDetalle).Id_Flujo;
         //var p = new DialogParameters();
         //var options = new DialogOptions { CloseOnEscapeKey = true, DisableBackdropClick = true };
         //p.Add("usuario", xUsuario);
@@ -47,22 +102,29 @@
 
     }
 
-    private async void Eliminar(object xUsuario)
+    private async void Eliminar(object xFlujo)
     {
         //var p = new DialogParameters();
         //var options = new DialogOptions { CloseOnEscapeKey = true, DisableBackdropClick = true };
         //p.Add("usuario", xUsuario);
-        //var dialog = DialogService.Show<FlujoDelete>("", p, options);
-        //var result = await dialog.Result;
+        var result = await DialogService.ShowMessageBox("Eliminar", $"¿Desea eliminar el flujo {(xFlujo as FlujoDetalle).Nombre}?", "Aceptar", "Cancelar");
 
-        //if (!result.Cancelled)
-        //{
-        //    await FlujosServices.Delete((xUsuario as ListUser).Id_Usuario);
-        //}
+        if (result.Value)
+        {
+            //await FlujosServices.Delete((xFlujo as FlujoDetalle).Id_Flujo);
+        }
     }
 
     protected async Task Agregar()
     {
+        //var p = new DialogParameters();
+        //var options = new DialogOptions { CloseOnEscapeKey = true, DisableBackdropClick = true };
+        //DialogService.Show<FlujoAdd>("Agregar", p, options);
+    }
+
+    protected async Task Volver()
+    {
+        opcion = 1;
         //var p = new DialogParameters();
         //var options = new DialogOptions { CloseOnEscapeKey = true, DisableBackdropClick = true };
         //DialogService.Show<FlujoAdd>("Agregar", p, options);

@@ -1,5 +1,4 @@
 ﻿using Blazored.SessionStorage;
-using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Authorization;
 using RocketProcess.Razor.Extensions;
 using RocketProcess.Shared.Seguridad;
@@ -29,6 +28,7 @@ namespace RocketProcess.Razor.Authentication
 
                 var claimsPrincipal = new ClaimsPrincipal(new ClaimsIdentity(new List<Claim>
                 {
+                    new Claim("Id", userSession.Id.ToString()),
                     new Claim(ClaimTypes.Name, userSession.UserName),
                     new Claim(ClaimTypes.Role, userSession.Role),
                     new Claim("Permiso","Cualquier cosa"),
@@ -50,6 +50,7 @@ namespace RocketProcess.Razor.Authentication
             {
                 claimsPrincipal = new ClaimsPrincipal(new ClaimsIdentity(new List<Claim>
                 {
+                    new Claim("Id", userSession.Id.ToString()),
                     new Claim(ClaimTypes.Name, userSession.UserName),
                     new Claim(ClaimTypes.Role, userSession.Role),
                     new Claim(Filtros.Nombre, userSession.UserName),
@@ -78,11 +79,7 @@ namespace RocketProcess.Razor.Authentication
                 if (userSession != null && DateTime.Now < userSession.ExpiryTimeStamp)
                     return userSession.Token;
             }
-            catch
-            {
-
-
-            }
+            catch{ }
 
             return result;
         }

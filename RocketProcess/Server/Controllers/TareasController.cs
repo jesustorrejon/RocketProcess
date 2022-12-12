@@ -33,6 +33,9 @@ namespace RocketProcess.Server.Controllers
         [HttpGet]
         public async Task<IEnumerable<SP_TAREA_GET>> Read([FromQuery] int Id_Tarea)
         {
+            var re = Request;
+            var headers = re.Headers;
+
             return await _tareasRepositories.Read(Id_Tarea);
         }
 

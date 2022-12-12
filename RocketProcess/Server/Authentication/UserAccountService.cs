@@ -46,6 +46,7 @@ namespace RocketProcess.Server.Authentication
 
             UserAccount userAccount = new UserAccount
             {
+                Id = _login.id_usuario,
                 UserName = _login.nombre,
                 Password = _login.clave,
                 Role = _login.rol

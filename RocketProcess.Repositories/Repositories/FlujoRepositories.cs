@@ -10,6 +10,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using RocketProcess.Shared.Modelos.ModelFlujo;
+using RocketProcess.Shared.Modelos.ModelTarea;
 
 namespace RocketProcess.Repositories.Repositories
 {
@@ -191,6 +192,23 @@ namespace RocketProcess.Repositories.Repositories
             //    string error = ex.Message;
             //    return Enumerable.Empty<FlujoDetalle>();
             //}
+        }
+
+        public async Task<IEnumerable<SP_FILTRA_USUARIO_ROL>> GetDetalle(int id_usuario)
+        {
+            try
+            {
+                var p = new OracleDynamicParameters();
+                p.Add("v_id_usuario", id_usuario, dbType: OracleMappingType.Int32, direction: ParameterDirection.Input);
+                p.Add("ROL_V", dbType: OracleMappingType.RefCursor, direction: ParameterDirection.Output);
+                var result = await _dbConnection.QueryAsync<SP_FILTRA_USUARIO_ROL>("PKG_TAREA.SP_FILTRA_USUARIO_ROL", p, commandType: CommandType.StoredProcedure);
+                return result;
+            }
+            catch (Exception ex)
+            {
+                string mensaje = ex.Message;
+                return Enumerable.Empty<SP_FILTRA_USUARIO_ROL>();
+            }
         }
 
         public Task<IEnumerable<Flujo>> Read(int Id)

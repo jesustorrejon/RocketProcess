@@ -24,5 +24,6 @@ builder.Services.AddScoped<IRoleServices, RoleServices>();
 builder.Services.AddScoped<IFlujosServices, FlujosServices>();
 builder.Services.AddScoped<ITareasServices, TareasServices>();
 builder.Services.AddScoped<IEstadoServices, EstadoServices>();
+builder.Services.AddScoped<IAreaNegocioServices, AreaNegocioServices>();
 
 await builder.Build().RunAsync();

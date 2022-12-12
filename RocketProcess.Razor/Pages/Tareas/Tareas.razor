@@ -29,12 +29,16 @@
             </Column>
         </Columns>
     </MudDataGrid>
-    <MudCardActions Class="align-items-center pt-2 row flex-row-reverse">
-        <MudButton Class="col-lg-2 col-md-2 col-sm-12 col-xs-12 ml-5 mt-2 btn btn-info" OnClick="Agregar" Variant="Variant.Filled" Color="Color.Info" StartIcon="fas fa-user-plus">
-            <MudText Class="pl-2">Agregar</MudText>
-        </MudButton>
-    </MudCardActions>
 
+    <AuthorizeView Roles="Administrador,Supervisor">
+        <Authorized>
+        <MudCardActions Class="align-items-center pt-2 row flex-row-reverse">
+            <MudButton Class="col-lg-2 col-md-2 col-sm-12 col-xs-12 ml-5 mt-2 btn btn-info" OnClick="Agregar" Variant="Variant.Filled" Color="Color.Info" StartIcon="fas fa-user-plus">
+                <MudText Class="pl-2">Agregar</MudText>
+            </MudButton>
+        </MudCardActions>
+        </Authorized>
+    </AuthorizeView>
 @code {
     List<string> lista;
     IEnumerable<Tarea> EnumTareas;
@@ -42,12 +46,25 @@
 
     protected override async Task OnInitializedAsync()
     {
+        await ValidarToken();
         EnumTareas = await TareasServices.GetAll();
         lista = new List<string>();
         //lista = ObtenerRegistros(0, cantidadRegistros);
     }
 
+    protected async Task ValidarToken(){
+        var customAuthStateProvider = (CustomAuthenticationStateProvider)authenticationStateProvider;
+        var token = await customAuthStateProvider.GetToken();
 
+        if (!string.IsNullOrWhiteSpace(token))
+        {
+            Http.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("bearer", token);
+        }
+        else
+        {
+            NM.NavigateTo("/login");
+        }
+    }
 
     private void GenerarRegistros(){
         lista = ObtenerRegistros(0, cantidadRegistros);
@@ -114,6 +131,7 @@
 
     protected async Task Agregar()
     {
+        NM.NavigateTo("Tarea/Agregar");
         //var p = new DialogParameters();
         //var options = new DialogOptions { CloseOnEscapeKey = true, DisableBackdropClick = true };
         //DialogService.Show<FlujoAdd>("Agregar", p, options);

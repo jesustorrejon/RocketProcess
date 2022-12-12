@@ -23,9 +23,10 @@ namespace RocketProcess.Services.Servicios.Services
             _httpClient = httpClient;
         }
 
-        public Task<Response<PostResponse>> Create(Tarea tarea)
+        public async Task<Response<PostResponse>> Create(Tarea tarea)
         {
-            throw new NotImplementedException();
+            var result = await _httpClient.PostAsJsonAsync<Tarea>($"api/Tareas", tarea);
+            return await result.Content.ReadFromJsonAsync<Response<PostResponse>>();
         }
 
         public Task<Response<PostResponse>> Delete(int Id_Tarea)
@@ -43,6 +44,18 @@ namespace RocketProcess.Services.Servicios.Services
             throw new NotImplementedException();
         }
 
+        public async Task<Response<PostResponse>> Guardar(Tarea tarea)
+        {
+            if (tarea.Id_Tarea > 0)
+            {
+                return await Update(tarea);
+            }
+            else
+            {
+                return await Create(tarea);
+            }
+        }
+
         public async Task<IEnumerable<SP_TAREA_GET>> Read(int Id_Tarea)
         {
             using (QueryString qs = new QueryString())
@@ -52,9 +65,10 @@ namespace RocketProcess.Services.Servicios.Services
             }
         }
 
-        public Task<Response<PostResponse>> Update(Tarea tarea)
+        public async Task<Response<PostResponse>> Update(Tarea tarea)
         {
-            throw new NotImplementedException();
+            var result = await _httpClient.PutAsJsonAsync<Tarea>($"api/Tareas", tarea);
+            return await result.Content.ReadFromJsonAsync<Response<PostResponse>>();
         }
     }
 }

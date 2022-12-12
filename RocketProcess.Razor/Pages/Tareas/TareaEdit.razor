@@ -2,9 +2,18 @@
 @using RocketProcess.Shared.Modelos.ModelTarea
 @inject ITareasServices TareasServices
 @inject IEstadoServices EstadoServices
+@inject IFlujosServices FlujosServices
+@inject IAreaNegocioServices AreaNegocioServices
+@inject IUserServices UserServices
 @attribute [Authorize]
 
-<PageTitle>Editar Tarea</PageTitle>
+@if (Id_Tarea > 0)
+{
+    <PageTitle>Editar Tarea</PageTitle>
+}
+else{
+    <PageTitle>Agregar Tarea</PageTitle>
+}
 
 @if (tarea is null)
 {
@@ -13,40 +22,92 @@
 else
 {
     <div class="container">
+        @if (Id_Tarea > 0)
+        {
+            <h3>Editar Tarea</h3>
+        }
+        else
+        {
+            <h3>Agregar Tarea</h3>
+        }
 
         <div class="row mb-3">
-            <MudText Class="col-3">Supervisor: <b>@(tarea.SUPERVISOR_NOMBRE.ToUpper())</b></MudText>
-            <MudText Class="col-3">Responsable: <b>@(tarea.USUARIO_NOMBRE.ToUpper())</b></MudText>
+            @if (Id_Tarea > 0)
+            {
+                <MudText Class="col-3">Supervisor: <b>@(tarea.SUPERVISOR_NOMBRE.ToUpper())</b></MudText>
+                <MudText Class="col-3">Responsable: <b>@(tarea.USUARIO_NOMBRE.ToUpper())</b></MudText>
+            }
+            else
+            {
+                <div class="col-3 mt-3">
+                    <MudSelect T="int" Label="Supervisor" Variant="Variant.Outlined" Placeholder="Selecciona un rol" @bind-Value="tarea.ID_SUPERVISOR">
+                        @foreach (var usuario in EnumUsuarios)
+                        {
+                            <MudSelectItem T="int" Value="@usuario.Id_Usuario">@usuario.Nombre</MudSelectItem>
+                        }
+                    </MudSelect>
+                </div>
+                <div class="col-3 mt-3">
+                    <MudSelect T="int" Label="Asignar a" Variant="Variant.Outlined" Placeholder="Selecciona un rol" @bind-Value="tarea.ID_USUARIO">
+                        @foreach (var usuario in EnumUsuarios)
+                        {
+                            <MudSelectItem T="int" Value="@usuario.Id_Usuario">@usuario.Nombre</MudSelectItem>
+                        }
+                    </MudSelect>
+                </div>
+            }       
+            
         </div>
 
 
         <div class="row">
-            @if (tarea.ID_AREA != 0)
+
+            @if (Id_Tarea > 0)
             {
                 <div class="col-3 mt-3">
 
-                    <MudTextField T="string" Class="form-control"
+                <MudTextField T="string" Class="form-control"
                           @bind-Value="tarea.AREA_NEGOCIO_TIPO_AREA"
                           Label="Area de negocio"
-                          Variant="Variant.Outlined" Disabled="true" />
-                </div>
-            }
+                          Variant="Variant.Outlined" Disabled="Desactivar_Area_Negocio" />
+            </div>
 
-            @if (tarea.ID_FLUJO != 0)
-            {
-                <div class="col-3 mt-3">
-                    <MudTextField T="string" Class="form-control"
+
+            <div class="col-3 mt-3">
+                <MudTextField T="string" Class="form-control"
                           @bind-Value="tarea.FLUJO_NOMBRE"
                           Label="Flujo"
-                          Variant="Variant.Outlined" Disabled="true" />
+                          Variant="Variant.Outlined" Disabled="Desactivar_Flujo" />
+            </div>
+            }
+            else
+            {
+                <div class="col-3 mt-3">
+                    <MudSelect T="int" Label="Area de negocio" Variant="Variant.Outlined" Placeholder="Selecciona un rol" @bind-Value="tarea.ID_AREA">
+                        @foreach (var area in EnumAreaNegocios)
+                        {
+                            <MudSelectItem T="int" Value="@area.Id_Area">@area.Tipo_Area</MudSelectItem>
+                        }
+                    </MudSelect>
+                </div>
+
+
+                <div class="col-3 mt-3">
+                    <MudSelect T="int" Label="Flujo" Variant="Variant.Outlined" Placeholder="Selecciona un rol" @bind-Value="tarea.ID_FLUJO">
+                        @foreach (var flujo in EnumFlujos)
+                        {
+                            <MudSelectItem T="int" Value="@flujo.Id_Flujo">@flujo.Nombre</MudSelectItem>
+                        }
+                    </MudSelect>
                 </div>
             }
+            
 
             <div class="col-3 mt-3 d-flex text-center align-items-center">
                 <_Semaforo Id_Estado="@tarea.ID_ESTADO" />
             </div>
 
-            @if (tarea.ID_TAREA_PRINCIPAL > 0)
+            @if (tarea.ID_TAREA_PRINCIPAL > 0 && Id_Tarea > 0)
             {
                 <div class="col-9 mt-3">
                     <MudTextField T="string" Class="form-control"
@@ -55,8 +116,25 @@ else
                           Variant="Variant.Outlined" Disabled="true" ReadOnly="true" />
                 </div>
             }
-
-
+            else if (Id_Tarea == 0)
+            {
+                <div class="d-flex">
+                    <div class="col-2 mt-3">
+                        <MudCheckBox T="bool" Checked="bEsSubtarea" CheckedChanged="EsSubTarea" Label="¿Es SubTarea?" />
+                    </div>
+                    @if (bEsSubtarea)
+                    {
+                        <div class="col-7 mt-3">
+                            <MudSelect T="int" Label="Tarea Principal" Disabled="false" Variant="Variant.Outlined" Placeholder="Selecciona un rol" @bind-Value="tarea.ID_TAREA_PRINCIPAL">
+                                @foreach (var tarea in EnumTareas)
+                                {
+                                    <MudSelectItem T="int" Value="@tarea.Id_Tarea">@tarea.Nombre</MudSelectItem>
+                                }
+                            </MudSelect>
+                        </div>
+                    }
+                </div>
+            }
 
             <div class="col-6 mt-3">
                 <MudTextField T="string" Class="form-control"
@@ -114,10 +192,18 @@ else
                 <div class="d-flex mt-3">
 
                     <MudButton Variant="Variant.Filled" Color="Color.Info" Class="mr-3" OnClick="Volver">Volver</MudButton>
-                    <MudButton Variant="Variant.Filled" Color="Color.Primary" Class="mr-3" OnClick="VerHistorial">Historial</MudButton>
-                    <MudSpacer />
-                    <MudButton Variant="Variant.Filled" Color="Color.Primary" Class="mr-3" OnClick="Comentar">Comentar</MudButton>
-                    <MudButton Variant="Variant.Filled" Color="Color.Primary" Class="mr-3" OnClick="Rechazar">Rechazar</MudButton>
+                    @if (Id_Tarea > 0)
+                    {
+                        <MudButton Variant="Variant.Filled" Color="Color.Primary" Class="mr-3" OnClick="VerHistorial">Historial</MudButton>
+                        <MudSpacer />
+                        <MudButton Variant="Variant.Filled" Color="Color.Primary" Class="mr-3" OnClick="Comentar">Comentar</MudButton>
+                        <MudButton Variant="Variant.Filled" Color="Color.Primary" Class="mr-3" OnClick="Rechazar">Rechazar</MudButton>
+                    }
+                    else
+                    {
+                        <MudSpacer />
+                    }
+                    
                     <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="Guardar">Guardar</MudButton>
                 </div>
             </div>
@@ -134,12 +220,20 @@ else
     [Parameter] public int Id_Tarea { get; set; }
 
     IEnumerable<Estado> EnumEstados;
+    IEnumerable<Flujo> EnumFlujos;
+    IEnumerable<Area_Negocio> EnumAreaNegocios;
+    IEnumerable<Usuario> EnumUsuarios;
+    IEnumerable<Tarea> EnumTareas;
 
     SP_TAREA_GET tarea { get; set; }
     string rol;
     int Dias_Plazo { get; set; } = 0;
+    bool bEsSubtarea { get; set; } = false;
 
     bool Desactivar_Modificacion = true;
+    bool Desactivar_Area_Negocio = true;
+    bool Desactivar_Flujo = true;
+    string visible_tarea_principal => bEsSubtarea? "" : "d-none";
 
     protected override async Task OnInitializedAsync()
     {
@@ -152,10 +246,30 @@ else
             EnumEstados = await EstadoServices.GetAll();
         }
 
-        Dias_Plazo = tarea is null ? 0 : (tarea.FECHA_TERMINO - tarea.FECHA_INICIO).Days;
-        var EnumTarea = await TareasServices.Read(Id_Tarea);
-        tarea = EnumTarea.FirstOrDefault();
+        if (Id_Tarea == 0)
+        {
+            EnumFlujos = await FlujosServices.ListarFlujos();
+            EnumAreaNegocios = await AreaNegocioServices.ListarAreaNegocios();
+            EnumUsuarios = await UserServices.GetAll();
+            EnumTareas = await TareasServices.GetAll();
+            Desactivar_Area_Negocio = false;
+            Desactivar_Flujo = false;
+            tarea = new SP_TAREA_GET();
+            tarea.FECHA_INICIO = DateTime.Now;
+            tarea.FECHA_TERMINO = DateTime.Now;
+            tarea.ID_USUARIO = EnumUsuarios.FirstOrDefault().Id_Usuario;
+            tarea.ID_SUPERVISOR = tarea.ID_USUARIO;
+            tarea.ID_AREA = EnumAreaNegocios.FirstOrDefault().Id_Area;
+            tarea.ID_FLUJO = EnumFlujos.FirstOrDefault().Id_Flujo;
+            tarea.ID_ESTADO = 5;
+        }
+        else
+        {
+            var EnumTarea = await TareasServices.Read(Id_Tarea);
+            tarea = EnumTarea.FirstOrDefault(); 
+        }
 
+        Dias_Plazo = tarea is null ? 0 : (tarea.FECHA_TERMINO - tarea.FECHA_INICIO).Days;
     }
 
     protected async Task ActualizarDiasPlazo(DateTime? captura, int opcion)
@@ -170,12 +284,94 @@ else
         }
 
         Dias_Plazo = tarea is null ? 0 : (tarea.FECHA_TERMINO - tarea.FECHA_INICIO).Days;
-        
+
     }
 
     protected async Task Guardar()
     {
+        var xtarea = new Tarea()
+        {
+            Id_Tarea = tarea.ID_TAREA,
+            Nombre = tarea.NOMBRE,
+            Fecha_Inicio = tarea.FECHA_INICIO,
+            Fecha_Termino = tarea.FECHA_TERMINO,
+            Descripcion_Tarea = tarea.DESCRIPCION_TAREA,
+            Id_Supervisor = tarea.ID_SUPERVISOR,
+            Id_Estado = tarea.ID_ESTADO,
+            Id_Usuario = tarea.ID_USUARIO,
+            Id_Area = tarea.ID_AREA,
+            Id_Tarea_Principal = tarea.ID_TAREA_PRINCIPAL,
+            Id_Flujo = tarea.ID_FLUJO
+        };
 
+        if (string.IsNullOrWhiteSpace(xtarea.Descripcion_Tarea))
+        {
+            DialogService.ShowMessageBox("Atención", "Descripcion de tarea requerido");
+            return;
+        }
+        if (string.IsNullOrWhiteSpace(xtarea.Nombre))
+        {
+            DialogService.ShowMessageBox("Atención", "Nombre de tarea requerido.");
+            return;
+        }
+        if (xtarea.Fecha_Termino < xtarea.Fecha_Inicio)
+        {
+            DialogService.ShowMessageBox("Atención", "Rango de fecha invalido.");
+            return;
+        }
+        if (xtarea.Id_Usuario == 0)
+        {
+            DialogService.ShowMessageBox("Atención", "Debe asignar a un usuario.");
+            return;
+        }
+        if (xtarea.Id_Supervisor == 0)
+        {
+            DialogService.ShowMessageBox("Atención", "Debe asignar a un supervisor.");
+            return;
+        }
+        if (xtarea.Id_Flujo == 0)
+        {
+            DialogService.ShowMessageBox("Atención", "Flujo es requerido.");
+            return;
+        }
+        if (xtarea.Id_Area == 0)
+        {
+            DialogService.ShowMessageBox("Atención", "Area de negocio es requerido.");
+            return;
+        }
+
+        var result = await TareasServices.Guardar(xtarea);
+
+        if (result.Result.Success)
+        {
+            if (Id_Tarea == 0)
+            {
+                var respuesta = await DialogService.ShowMessageBox("", "Tarea creada.", "Aceptar");
+                if (respuesta.Value)
+                {
+                    NM.NavigateTo("/Tareas");
+                }
+            }
+            else
+            {
+                DialogService.ShowMessageBox("", "Tarea actualizada.", "Aceptar");
+            }
+            
+        }
+    }
+
+    protected void EsSubTarea(bool opcion)
+    {
+        bEsSubtarea = opcion;
+        if (opcion)
+        {
+            tarea.ID_TAREA_PRINCIPAL = EnumTareas.FirstOrDefault().Id_Tarea;
+            StateHasChanged();
+        }
+        else
+        {
+            tarea.ID_TAREA_PRINCIPAL = 0;
+        }
     }
 
     protected async Task VerHistorial()

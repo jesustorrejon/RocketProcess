@@ -17,6 +17,7 @@ namespace RocketProcess.Services.Servicios.Interfaces
         Task<Response<PostResponse>> Create(Tarea tarea);
         Task<IEnumerable<SP_TAREA_GET>> Read(int Id_Tarea);
         Task<Response<PostResponse>> Update(Tarea tarea);
+        Task<Response<PostResponse>> Guardar(Tarea tarea);
         Task<Response<PostResponse>> Delete(int Id_Tarea);
     }
 }

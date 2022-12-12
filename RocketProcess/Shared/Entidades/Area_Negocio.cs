@@ -6,10 +6,10 @@ using System.Threading.Tasks;
 
 namespace RocketProcess.Shared.Entidades
 {
-    public class Flujo
+    public class Area_Negocio
     {
-        public int Id_Flujo { get; set; }
-        public string Nombre { get; set; }
-        public string Descripcion { get; set; }
+        public int Id_Area { get; set; }
+        public string Tipo_Area { get; set; }
+        public string Area_Desc { get; set; }
     }
 }

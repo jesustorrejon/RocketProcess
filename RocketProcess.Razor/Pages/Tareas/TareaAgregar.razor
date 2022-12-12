@@ -1,0 +1,21 @@
+﻿@page "/Tarea/Agregar"
+@attribute [Authorize]
+
+<AuthorizeView Roles="Administrador,Supervisor">
+    <Authorized>
+        <TareaEdit Id_Tarea="0" />
+    </Authorized>
+    <NotAuthorized>
+        <p>No está autorizado para crear tareas.</p>
+        <MudButton OnClick="Atras" Color="Color.Info">Volver</MudButton>
+    </NotAuthorized>
+</AuthorizeView>
+
+
+@code {
+
+
+    protected void Atras(){
+        NM.NavigateTo("/Tareas");
+    }
+}

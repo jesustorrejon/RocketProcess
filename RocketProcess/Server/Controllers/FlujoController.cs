@@ -5,6 +5,7 @@ using RocketProcess.Repositories.Repositories;
 using RocketProcess.Shared.Entidades;
 using RocketProcess.Shared.Modelos;
 using RocketProcess.Shared.Modelos.ModelFlujo;
+using RocketProcess.Shared.Modelos.ModelTarea;
 
 namespace RocketProcess.Server.Controllers
 {
@@ -13,10 +14,26 @@ namespace RocketProcess.Server.Controllers
     public class FlujoController : ControllerBase
     {
         private readonly IFlujoRepositories _flujoRepositories;
+        private readonly ICRUD<Flujo> _CRUD;
 
-        public FlujoController(IFlujoRepositories flujoRepositories)
+        public FlujoController(IFlujoRepositories flujoRepositories, ICRUD<Flujo> cRUD)
         {
             _flujoRepositories = flujoRepositories;
+            _CRUD = cRUD;
+        }
+
+        [HttpGet]
+        public async Task<IEnumerable<SP_FILTRA_USUARIO_ROL>> GetDetalle([FromQuery]string id_usuario)
+        {
+            int id = Convert.ToInt32(id_usuario);
+            return await _flujoRepositories.GetDetalle(id);
+        }
+
+        [HttpGet]
+        [Route("Listar")]
+        public async Task<IEnumerable<Flujo>> Listar()
+        {
+            return await _CRUD.GetAll();
         }
 
         [HttpGet]
