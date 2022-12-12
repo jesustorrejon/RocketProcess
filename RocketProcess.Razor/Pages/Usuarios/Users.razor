@@ -74,12 +74,8 @@ else{*@
 
         if ((bool)result.Data)
         {
-            var response = await UserServices.Delete((xUsuario as ListUser).Id_Usuario);
-            if (response.Result.Success)
-            {
-                Enumusuarios = await UserServices.GetAll();
-                StateHasChanged();
-            }
+            Enumusuarios = await UserServices.GetAll();
+            StateHasChanged();
         }
     }
 
@@ -113,11 +109,6 @@ else{*@
             _selectedItems.Add(item);
         else
             _selectedItems.Remove(item);
-
-        //if (_selectedItems.Count == _usuarios.Count())
-        //    _selectAll = true;
-        //else
-        //    _selectAll = false;
     }
 
 }

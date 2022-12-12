@@ -12,42 +12,96 @@
         <tr>@context</tr>
     </Fila>
 </Grilla>*@
+@if (lstTareas is null)
+{
+    <MudProgressCircular Indeterminate="true" />
+}
+else
+{
+    <h3 class="text-center pb-3">Tareas</h3>
+    <MudCard Outlined="true">
+        <MudText Class="text-center" Typo="Typo.h5">Asignadas</MudText>
+        <MudDataGrid Outlined="true" Hover="true" T="Tarea" Items="@lstTareas.Where(tarea => tarea.Id_Estado == 5)" Virtualize="true" FixedHeader="true" Height="350px"
+                 Filterable="true" FilterMode="@DataGridFilterMode.ColumnFilterRow" Loading="@(EnumTareas is null)">
+            <Columns>
+                <Column T="Tarea" Field="Id_Tarea" Title="#" />
+                <Column T="Tarea" Field="Nombre" />
+                <Column Sortable="false" T="Tarea" Field="Fecha_Inicio" />
+                <Column Sortable="false" T="Tarea" Field="Fecha_Termino" />
+                <Column Sortable="false" T="Tarea" CellClass="d-flex justify-end">
+                    <CellTemplate>
+                        @*<_Semaforo Id_Estado="@context.Item.Id_Estado" />*@
+                        <MudIconButton Size="@Size.Small" Icon="@Icons.Outlined.Edit" OnClick="@(e => Modificar(context.Item))" />
+                        <MudIconButton Size="@Size.Small" Icon="@Icons.Material.Filled.Delete" OnClick="@(e => Eliminar(context.Item))" />
+                    </CellTemplate>
+                </Column>
+            </Columns>
+        </MudDataGrid>
+    </MudCard>
 
-<h3 class="text-center pb-3">Tareas</h3>
-    <MudDataGrid Outlined="true" Hover="true" T="Tarea" Items="@EnumTareas" Virtualize="true" FixedHeader="true" Height="350px"
-             Filterable="true" FilterMode="@DataGridFilterMode.ColumnFilterRow" Loading="@(EnumTareas is null)">
-        <Columns>
-        <Column T="Tarea" Field="Id_Tarea" Title="#" />
-        <Column T="Tarea" Field="Nombre" />
-        <Column Sortable="false" T="Tarea" Field="Fecha_Inicio" />
-        <Column Sortable="false" T="Tarea" Field="Fecha_Termino" />
-        <Column Sortable="false" T="Tarea" CellClass="d-flex justify-end">
-            <CellTemplate>
-                    <MudIconButton Size="@Size.Small" Icon="@Icons.Outlined.Edit" OnClick="@(e => Modificar(context.Item))" />
-                    <MudIconButton Size="@Size.Small" Icon="@Icons.Material.Filled.Delete" OnClick="@(e => Eliminar(context.Item))" />
-            </CellTemplate>
-            </Column>
-        </Columns>
-    </MudDataGrid>
+
+    <MudCard Class="mt-3" Outlined="true">
+        <MudText Class="text-center" Typo="Typo.h5">En proceso</MudText>
+        <MudDataGrid Outlined="true" Hover="true" T="Tarea" Items="@lstTareas.Where(tarea => tarea.Id_Estado != 5)" Virtualize="true" FixedHeader="true" Height="350px"
+                 Filterable="true" FilterMode="@DataGridFilterMode.ColumnFilterRow" Loading="@(EnumTareas is null)">
+            <Columns>
+                <Column T="Tarea" Field="Id_Tarea" Title="#" />
+                <Column T="Tarea" Field="Nombre" />
+                <Column Sortable="false" T="Tarea" Field="Fecha_Inicio" />
+                <Column Sortable="false" T="Tarea" Field="Fecha_Termino" />
+                <Column Sortable="false" T="Tarea" CellClass="d-flex justify-end">
+                    <CellTemplate>
+                        @*<_Semaforo Id_Estado="@context.Item.Id_Estado" />*@
+                        <MudIconButton Size="@Size.Small" Icon="@Icons.Outlined.Edit" OnClick="@(e => Modificar(context.Item))" />
+                        <MudIconButton Size="@Size.Small" Icon="@Icons.Material.Filled.Delete" OnClick="@(e => Eliminar(context.Item))" />
+                    </CellTemplate>
+                </Column>
+            </Columns>
+        </MudDataGrid>
+    </MudCard>
 
     <AuthorizeView Roles="Administrador,Supervisor">
         <Authorized>
-        <MudCardActions Class="align-items-center pt-2 row flex-row-reverse">
-            <MudButton Class="col-lg-2 col-md-2 col-sm-12 col-xs-12 ml-5 mt-2 btn btn-info" OnClick="Agregar" Variant="Variant.Filled" Color="Color.Info" StartIcon="fas fa-user-plus">
-                <MudText Class="pl-2">Agregar</MudText>
-            </MudButton>
-        </MudCardActions>
+            <MudCardActions Class="align-items-center pt-2 row flex-row-reverse">
+                <MudButton Class="col-lg-2 col-md-2 col-sm-12 col-xs-12 ml-5 mt-2 btn btn-info" OnClick="Agregar" Variant="Variant.Filled" Color="Color.Info" StartIcon="fas fa-user-plus">
+                    <MudText Class="pl-2">Agregar</MudText>
+                </MudButton>
+            </MudCardActions>
         </Authorized>
     </AuthorizeView>
+}
+
 @code {
+    [CascadingParameter]
+    private Task<AuthenticationState> authenticationState { get; set; }
+
+    string rol { get; set; }
+    int id_usuario = 0;
+
     List<string> lista;
     IEnumerable<Tarea> EnumTareas;
+    List<Tarea> lstTareas = new List<Tarea>();
     int cantidadRegistros = 50000;
 
     protected override async Task OnInitializedAsync()
     {
-        await ValidarToken();
+        //await ValidarToken();
         EnumTareas = await TareasServices.GetAll();
+
+        var Auth = await authenticationState;
+        rol = Auth.User.Claims.FirstOrDefault(x => x.Type == "http://schemas.microsoft.com/ws/2008/06/identity/claims/role").Value;
+        id_usuario = Convert.ToInt32(Auth.User.Claims.FirstOrDefault(x => x.Type == "Id").Value);
+
+        if (rol.ToLower() == "administrador")
+        {
+            lstTareas.AddRange(EnumTareas);
+        }
+        else
+        {
+            var filtro = EnumTareas.Where(x => x.Id_Usuario == id_usuario || x.Id_Supervisor == id_usuario);
+            lstTareas.AddRange(filtro);
+        }
+
         lista = new List<string>();
         //lista = ObtenerRegistros(0, cantidadRegistros);
     }

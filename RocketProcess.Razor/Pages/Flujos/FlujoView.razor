@@ -10,9 +10,15 @@
     <MudDataGrid Outlined="true" Hover="true" T="FlujoDetalle" Items="@lstFlujos" Virtualize="true" FixedHeader="true" Height="350px"
              Filterable="true" FilterMode="@DataGridFilterMode.ColumnFilterRow" Loading="@(EnumFlujos is null)">
         <Columns>
-            <Column T="FlujoDetalle" Field="Id_Flujo" Title="#" />
+            <Column T="FlujoDetalle" Field="Id_Flujo" Title="#"  />
             <Column T="FlujoDetalle" Field="Nombre" />
-            <Column T="FlujoDetalle" Field="Descripcion" />
+            <Column T="FlujoDetalle" Title="N° Tareas del flujo">
+                <CellTemplate>
+                    <MudText>
+                        @lstFlujos.FirstOrDefault(flujo => flujo.Id_Flujo == context.Item.Id_Flujo).Tareas.Count()
+                    </MudText>
+                </CellTemplate>
+            </Column>
             <Column Sortable="false" T="FlujoDetalle" CellClass="d-flex justify-end">
             <CellTemplate>
                     <MudIconButton Size="@Size.Small" Icon="@Icons.Outlined.Edit" OnClick="@(e => Ver(context.Item))" />
@@ -30,7 +36,7 @@
 else
 {
     <FlujoCompleto lstFlujos="lstFlujos" id_Flujo="id_Flujo" />
-    <MudButton OnClick="Volver" Color="Color.Info">Volver</MudButton>
+    <MudButton Variant="Variant.Filled" Color="Color.Info" Class="mr-3" OnClick="Volver">Volver</MudButton>
 }
 
 
@@ -77,8 +83,12 @@ else
                     lstTareas.Add(tarea);
                 }
 
-                fd.Tareas.AddRange(lstTareas);
-                lstFlujos.Add(fd);
+                if (lstTareas.Count() > 0)
+                {
+                    fd.Tareas.AddRange(lstTareas);
+                    lstFlujos.Add(fd);
+                }
+                
                 lstTareas.Clear();
             }
         }

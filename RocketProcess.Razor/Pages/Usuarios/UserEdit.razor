@@ -1,5 +1,6 @@
 ﻿@inject ILoginServices LoginServices
 @inject IUserServices UserServices
+@inject IRoleServices RoleServices
 
 <style>
     .caja{
@@ -39,7 +40,13 @@ else{
                     <MudTextField @bind-Value="@usuario.Correo" Label="Correo" Variant="Variant.Outlined"></MudTextField>
                 </div>
                 <div class="caja">
-                    <MudTextField @bind-Value="@login.rol" Label="Rol" Variant="Variant.Outlined"></MudTextField>
+                    <MudSelect T="int" Variant="Variant.Outlined" Placeholder="Selecciona un rol" @bind-Value="login.id_rol">
+                            @foreach (var rol in EnumRoles)
+                            {
+                                <MudSelectItem T="int"  Value="@rol.Id_Rol">@rol.Nombre_Rol</MudSelectItem>
+                            }
+                        </MudSelect>
+                    @*<MudTextField @bind-Value="@login.rol" Label="Rol" Variant="Variant.Outlined"></MudTextField>*@
                 </div>
             </MudContainer>
         </DialogContent>
@@ -61,10 +68,19 @@ else{
     private Login login { get; set; }
     private ListUser _ListUser { get; set; }
 
+    private IEnumerable<Rol> EnumRoles;
+
     protected override async Task OnInitializedAsync()
     {
         var result = await LoginServices.LoginConnect(usuario.Correo, usuario.Clave);
         login = result.FirstOrDefault();
+        EnumRoles = await RoleServices.GetAll();
+
+        if (login.id_rol == 0)
+        {
+            login.id_rol = EnumRoles.FirstOrDefault(x => x.Nombre_Rol.ToLower() == "funcionario").Id_Rol;
+        }
+
         _ListUser = new ListUser();
     }
 
@@ -82,7 +98,23 @@ else{
 
         var result = await UserServices.Save(_ListUser);
 
-        MudDialog.Close(DialogResult.Ok(true));
+        string mensaje = "";
+
+        if (result.Result.Success)
+        {
+            mensaje = "Guardado exitosamente";
+        }
+        else
+        {
+            mensaje = @$"No se logró guaradar. {Environment.NewLine} {result.Result.Error}" ;
+        }
+
+        var dialog = await DialogService.ShowMessageBox("Mensaje", mensaje);
+
+        if (dialog.Value)
+        {
+            MudDialog.Close(DialogResult.Ok(true));
+        }      
     }
-    void Cancel() => MudDialog.Cancel();
+    void Cancel() => MudDialog.Close(false);
 }

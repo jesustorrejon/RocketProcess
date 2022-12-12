@@ -1,0 +1,62 @@
+﻿@page "/Tarea/Historial/{id_tarea:int}"
+@inject ITareasServices TareasServices
+
+<h3>Historial</h3>
+
+<MudButton Variant="Variant.Filled" Color="Color.Info" Class="mr-3" OnClick="Volver">Volver</MudButton>
+
+<MudContainer Class="h-50">
+    @if (EnumEstados is null)
+    {
+        <MudProgressCircular Indeterminate="true" />
+    }
+    else
+    {
+        @foreach (var estado in EnumEstados)
+        {
+            <MudCard Class="mt-3" Outlined=true>
+                <div class="row">
+                    <div class="col-2">
+                        <div>
+                            <MudText>Tipo</MudText>
+                            @if (estado.Tipo == "C")
+                            {
+                                <MudText>Comentario</MudText>
+                            }
+                            else
+                            {
+                                <MudText Style="color:red;">Justificación de rechazo</MudText>
+                            }
+
+                        </div>
+
+                    </div>
+                    <div class="col-8">
+                        <div>
+                            <MudText>Mensaje</MudText>
+                            <MudText>@estado.comentario</MudText>
+                        </div>
+                    </div>
+                </div>
+
+            </MudCard>
+        }
+    }
+</MudContainer>
+
+@code {
+    [Parameter]
+    public int id_tarea { get; set; }
+
+    IEnumerable<Estado_Detalle> EnumEstados;
+
+    protected override async Task OnInitializedAsync()
+    {
+        EnumEstados = await TareasServices.ObtenerComentarios(id_tarea);
+    }
+
+    protected async Task Volver()
+    {
+        NM.NavigateTo($"/Tarea/Editar/{id_tarea}");
+    }
+}

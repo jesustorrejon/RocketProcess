@@ -91,7 +91,23 @@ else
     {
         var result = await UserServices.Save(_ListUser);
 
-        MudDialog.Close(DialogResult.Ok(true));
+        string mensaje = "";
+
+        if (result.Result.Success)
+        {
+            mensaje = "Guardado exitosamente";
+        }
+        else
+        {
+            mensaje = @$"No se logró guaradar. {Environment.NewLine} {result.Result.Error}";
+        }
+
+        var dialog = await DialogService.ShowMessageBox("Mensaje", mensaje);
+
+        if (dialog.Value)
+        {
+            MudDialog.Close(DialogResult.Ok(result.Result.Success));
+        }
     }
-    void Cancel() => MudDialog.Cancel();
+    void Cancel() => MudDialog.Close(false);
 }

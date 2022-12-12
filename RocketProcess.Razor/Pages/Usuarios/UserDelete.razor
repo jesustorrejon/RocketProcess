@@ -1,4 +1,5 @@
-﻿
+﻿@inject IUserServices UserServices
+
 <MudDialog>
     <TitleContent>
 
@@ -21,6 +22,27 @@
     [Parameter]
     public int MyProperty { get; set; }
 
-    void Submit() => MudDialog.Close(DialogResult.Ok(true));
+    protected async Task Submit()
+    {
+        var result = await UserServices.Delete(usuario.Id_Usuario);
+
+        string mensaje = "";
+
+        if (result.Result.Success)
+        {
+            mensaje = "Se eliminó usuario exitosamente";
+        }
+        else
+        {
+            mensaje = @$"No se logró eliminar. {Environment.NewLine} {result.Result.Error}";
+        }
+
+        var dialog = await DialogService.ShowMessageBox("Mensaje", mensaje);
+
+        if (dialog.Value)
+        {
+            MudDialog.Close(DialogResult.Ok(true));
+        }
+    }
     void Cancel() => MudDialog.Cancel();
 }

@@ -198,13 +198,14 @@ else
                         <MudSpacer />
                         <MudButton Variant="Variant.Filled" Color="Color.Primary" Class="mr-3" OnClick="Comentar">Comentar</MudButton>
                         <MudButton Variant="Variant.Filled" Color="Color.Primary" Class="mr-3" OnClick="Rechazar">Rechazar</MudButton>
+                        <MudButton Variant="Variant.Filled" Color="Color.Primary" Class="mr-3" OnClick="Aceptar">Aceptar</MudButton>
                     }
                     else
                     {
                         <MudSpacer />
                     }
                     
-                    <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="Guardar">Guardar</MudButton>
+                    <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="Guardar">Grabar</MudButton>
                 </div>
             </div>
         </div>
@@ -356,7 +357,7 @@ else
             {
                 DialogService.ShowMessageBox("", "Tarea actualizada.", "Aceptar");
             }
-            
+
         }
     }
 
@@ -376,17 +377,40 @@ else
 
     protected async Task VerHistorial()
     {
-
+        NM.NavigateTo($"/Tarea/Historial/{tarea.ID_TAREA}");
     }
 
     protected async Task Rechazar()
     {
+        var respuesta = await DialogService.ShowMessageBox("Atención", "Debe ingresar una justificación de reachazo.","Aceptar","Cancelar");
 
+        if (respuesta.Value)
+        {
+            var p = new DialogParameters();
+            var options = new DialogOptions { CloseOnEscapeKey = true, DisableBackdropClick = true };
+            p.Add("id_Tarea", tarea.ID_TAREA);
+            p.Add("Tipo", "R");
+            var dialog = DialogService.Show<TareaComentario>("", p, options);
+            var result = await dialog.Result;
+            tarea.ID_ESTADO = 4;
+            await Guardar();
+        }
+    }
+
+    protected async Task Aceptar()
+    {
+        tarea.ID_ESTADO = 6;
+        await Guardar();
     }
 
     protected async Task Comentar()
     {
-
+        var p = new DialogParameters();
+        var options = new DialogOptions { CloseOnEscapeKey = true, DisableBackdropClick = true };
+        p.Add("id_Tarea", tarea.ID_TAREA);
+        p.Add("Tipo", "C");
+        var dialog = DialogService.Show<TareaComentario>("", p, options);
+        var result = await dialog.Result;
     }
 
     protected async Task Volver()

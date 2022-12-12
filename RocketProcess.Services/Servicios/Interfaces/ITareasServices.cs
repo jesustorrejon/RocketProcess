@@ -19,5 +19,7 @@ namespace RocketProcess.Services.Servicios.Interfaces
         Task<Response<PostResponse>> Update(Tarea tarea);
         Task<Response<PostResponse>> Guardar(Tarea tarea);
         Task<Response<PostResponse>> Delete(int Id_Tarea);
+        Task<Response<PostResponse>> AgregarComentario(Estado_Detalle estado_Detalle);
+        Task<IEnumerable<Estado_Detalle>> ObtenerComentarios(int id_tarea);
     }
 }

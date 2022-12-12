@@ -1,0 +1,64 @@
+﻿@inject ITareasServices TareasServices
+
+<MudDialog DisableSidePadding="true">
+    <TitleContent>
+        <MudText>Agregar Comentario</MudText>
+    </TitleContent>
+    <DialogContent>
+            <MudContainer Style="max-height: 60vh; overflow-y: scroll">
+                <div class="caja">
+                <MudTextField @bind-Value="@comentario" Label="Comentario" Lines="10" Variant="Variant.Outlined"></MudTextField>
+                </div>
+            </MudContainer>
+    </DialogContent>
+    <DialogActions>
+        <MudButton OnClick="Cancel">Cancelar</MudButton>
+        <MudButton Color="Color.Primary" OnClick="Submit">Grabar</MudButton>
+    </DialogActions>
+</MudDialog>
+
+@code {
+    [CascadingParameter] MudDialogInstance MudDialog { get; set; }
+
+    string comentario = "";
+    [Parameter] public int id_Tarea { get; set; }
+
+    [Parameter] public string Tipo { get; set; }
+
+
+    protected async Task Cancel()
+    {
+        MudDialog.Close(false);
+    }
+
+    protected async Task Submit()
+    {
+        var Comentario = new Estado_Detalle()
+        {
+            id_comentario = 0,
+                comentario = comentario,
+            id_tarea = id_Tarea,
+            Tipo = Tipo
+        };
+
+        var result = await TareasServices.AgregarComentario(Comentario);
+
+        string mensaje = "";
+
+        if (result.Result.Success)
+        {
+            mensaje = "Comentario ingresado";
+        }
+        else
+        {
+            mensaje = @$"No se logró comentar. {Environment.NewLine} {result.Result.Error}" ;
+        }
+
+        var dialog = await DialogService.ShowMessageBox("Mensaje", mensaje);
+
+        if (dialog.Value)
+        {
+            MudDialog.Close(DialogResult.Ok(true));
+        }
+    }
+}

@@ -30,6 +30,15 @@ namespace RocketProcess.Server.Controllers
             return Ok(new Response<PostResponse>(result));
         }
 
+        [HttpPost]
+        [Route("AgregarComentario")]
+        public async Task<IActionResult> AgregarComentario([FromBody] Estado_Detalle estado_Detalle)
+        {
+            var result = await _tareasRepositories.AgregarComentario(estado_Detalle);
+
+            return Ok(new Response<PostResponse>(result));
+        }
+
         [HttpGet]
         public async Task<IEnumerable<SP_TAREA_GET>> Read([FromQuery] int Id_Tarea)
         {
@@ -37,6 +46,16 @@ namespace RocketProcess.Server.Controllers
             var headers = re.Headers;
 
             return await _tareasRepositories.Read(Id_Tarea);
+        }
+
+        [HttpGet]
+        [Route("ObtenerComentarios")]
+        public async Task<IEnumerable<Estado_Detalle>> ObtenerComentarios([FromQuery] int Id_Tarea)
+        {
+            var re = Request;
+            var headers = re.Headers;
+
+            return await _tareasRepositories.ObtenerComentarios(Id_Tarea);
         }
 
         [HttpGet]

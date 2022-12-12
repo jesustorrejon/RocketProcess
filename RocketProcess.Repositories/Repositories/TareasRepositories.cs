@@ -186,5 +186,41 @@ namespace RocketProcess.Repositories.Repositories
         {
             throw new NotImplementedException();
         }
+
+        public async Task<PostResponse> AgregarComentario(Estado_Detalle estado_Detalle)
+        {
+            try
+            {
+                var p = new OracleDynamicParameters();
+                p.Add("v_comentario", estado_Detalle.comentario, dbType: OracleMappingType.Varchar2, direction: ParameterDirection.Input);
+                p.Add("v_id_tarea", estado_Detalle.id_tarea, dbType: OracleMappingType.Int32, direction: ParameterDirection.Input);
+                p.Add("v_tipo", estado_Detalle.Tipo, dbType: OracleMappingType.Varchar2, direction: ParameterDirection.Input);
+                var result = await _dbConnection.ExecuteAsync("PKG_ESTADO_DETALLE.SP_CREAR_ESTADO_DETALLE", p, commandType: CommandType.StoredProcedure);
+
+                return PostResponse.CrearRespuesta(true, ClsCommon.SinErrores);
+            }
+            catch (Exception ex)
+            {
+                return PostResponse.CrearRespuesta(false, ClsCommon.MsgErrorCrear + ex.Message);
+            }
+        }
+
+        public async Task<IEnumerable<Estado_Detalle>> ObtenerComentarios(int id_tarea)
+        {
+            try
+            {
+                var p = new OracleDynamicParameters();
+                p.Add("v_id_tarea", id_tarea, dbType: OracleMappingType.Varchar2, direction: ParameterDirection.Input);
+                p.Add("lista_estado_detalle", dbType: OracleMappingType.RefCursor, direction: ParameterDirection.Output);
+                var result = await _dbConnection.QueryAsync<Estado_Detalle>("PKG_ESTADO_DETALLE.SP_LISTAR__1_ESTADO_DETALLE", p, commandType: CommandType.StoredProcedure);
+                return result;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("ERROR : " + ex.Message);
+                string error = ex.Message;
+                return Enumerable.Empty<Estado_Detalle>();
+            }
+        }
     }
 }

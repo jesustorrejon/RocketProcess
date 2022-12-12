@@ -10,6 +10,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http.Json;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace RocketProcess.Services.Servicios.Services
@@ -21,6 +22,12 @@ namespace RocketProcess.Services.Servicios.Services
         public TareasServices(HttpClient httpClient)
         {
             _httpClient = httpClient;
+        }
+
+        public async Task<Response<PostResponse>> AgregarComentario(Estado_Detalle estado_Detalle)
+        {
+            var result = await _httpClient.PostAsJsonAsync<Estado_Detalle>($"api/Tareas/AgregarComentario", estado_Detalle);
+            return await result.Content.ReadFromJsonAsync<Response<PostResponse>>();
         }
 
         public async Task<Response<PostResponse>> Create(Tarea tarea)
@@ -53,6 +60,16 @@ namespace RocketProcess.Services.Servicios.Services
             else
             {
                 return await Create(tarea);
+            }
+        }
+
+        public async Task<IEnumerable<Estado_Detalle>> ObtenerComentarios(int id_tarea)
+        {
+            
+            using (QueryString qs = new QueryString())
+            {
+                qs.Add("Id_Tarea", id_tarea.ToString());
+                return await _httpClient.GetFromJsonAsync<IEnumerable<Estado_Detalle>>($"api/Tareas/ObtenerComentarios{qs.ObtenerQueryString()}");
             }
         }
 

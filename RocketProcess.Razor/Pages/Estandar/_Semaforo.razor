@@ -43,17 +43,25 @@
     }
 </style>
 
-<div class="container contenedor">
-    <div class="semaforo">
-        <span class="luces-circulo @red" color="red"></span>
-        <span class="luces-circulo @yellow" color="yellow"></span>
-        <span class="luces-circulo @green" color="green"></span>
+@if (Estados is null || color is null)
+{
+    <MudProgressCircular Indeterminate="true" />
+}
+else
+{
+    <div class="container contenedor">
+        <div class="semaforo">
+            <span class="luces-circulo @red" color="red"></span>
+            <span class="luces-circulo @yellow" color="yellow"></span>
+            <span class="luces-circulo @green" color="green"></span>
+        </div>
     </div>
-</div>
+}
+
 
 @code {
-
-    [Parameter] public int Id_Estado{ get; set; }
+    [Parameter] public int Id_Estado { get; set; } = 0;
+    [Parameter] public string sEstado { get; set; } = "";
 
     IEnumerable<Estado> Estados;
     string color = "";
@@ -62,9 +70,14 @@
     string yellow => color.ToLower() == "amarillo" ? "yellow" : "";
     string green => color.ToLower() == "verde" ? "green" : "";
 
-    protected override async Task OnParametersSetAsync()
+    protected override async Task OnInitializedAsync()
     {
         Estados = await EstadoServices.GetAll();
-        color = Estados.FirstOrDefault(x => x.Id_Estado == Id_Estado).Color;
+        color = Estados.FirstOrDefault(x => x.Id_Estado == Id_Estado || x.Descripcion == sEstado).Color;
+    }
+
+    protected override async Task OnParametersSetAsync()
+    {
+       
     }
 }

@@ -2,24 +2,57 @@
 @using RocketProcess.Shared.Modelos.ModelFlujo
 @using RocketProcess.Shared.Modelos.ModelTarea
 @inject IFlujosServices FlujosServices
+@inject IEstadoServices EstadoServices
 @inject NavigationManager NM
 
 <h3>Tareas de flujo</h3>
+@if (lstTareas is null || lstFlujos is null || cargando)
+{
+    <MudProgressCircular Indeterminate="true" />
+}
+else
+{
+    <MudCard Outlined="true">
 
-<MudDataGrid Outlined="true" Hover="true" T="TareaDeFlujo" Items="@lstTareas" Virtualize="true" FixedHeader="true" Height="350px"
-             Filterable="true" FilterMode="@DataGridFilterMode.ColumnFilterRow" Loading="@(lstTareas is null)">
-    <Columns>
-        <Column T="TareaDeFlujo" Field="Id_Tarea" Title="#" />
-        <Column T="TareaDeFlujo" Field="Nombre" />
-        <Column T="TareaDeFlujo" Field="Estado_Tarea" />
-        <Column T="TareaDeFlujo" Field="Dias_Plazo" />
-        <Column Sortable="false" T="TareaDeFlujo" CellClass="d-flex justify-end">
-            <CellTemplate>
-                <MudIconButton Size="@Size.Small" Icon="@Icons.Outlined.PanoramaFishEye" OnClick="@(e => Ver(context.Item))" />
-            </CellTemplate>
-        </Column>
-    </Columns>
-</MudDataGrid>
+        <MudText Class="text-center" Typo="Typo.h5">Asignadas</MudText>
+        <MudDataGrid Outlined="true" Hover="true" T="TareaDeFlujo" Items="@lstTareas.Where( tarea => tarea.Estado_Tarea.ToLower() == "asignada")" Virtualize="true" FixedHeader="true" Height="350px"
+                 Filterable="true" FilterMode="@DataGridFilterMode.ColumnFilterRow" Loading="@(lstTareas is null)">
+            <Columns>
+                <Column T="TareaDeFlujo" Field="Id_Tarea" Title="#" />
+                <Column T="TareaDeFlujo" Field="Nombre" />
+                <Column T="TareaDeFlujo" Field="Estado_Tarea" />
+                <Column T="TareaDeFlujo" Field="Dias_Plazo" />
+                <Column Sortable="false" T="TareaDeFlujo" CellClass="d-flex justify-end">
+                    <CellTemplate>
+                        @*<_Semaforo sEstado="@context.Item.Estado_Tarea" />*@
+                        <MudIconButton Size="@Size.Small" Icon="@Icons.Material.Filled.Visibility" OnClick="@(e => Ver(context.Item))" />
+                    </CellTemplate>
+                </Column>
+            </Columns>
+        </MudDataGrid>
+    </MudCard>
+
+    <MudCard Class="mt-3" Outlined="true">
+        <MudText Class="text-center" Typo="Typo.h5">En Progreso</MudText>
+        <MudDataGrid Outlined="true" Hover="true" T="TareaDeFlujo" Items="@lstTareas.Where( tarea => tarea.Estado_Tarea.ToLower() != "asignada")" Virtualize="true" FixedHeader="true" Height="350px"
+                 Filterable="true" FilterMode="@DataGridFilterMode.ColumnFilterRow" Loading="@(lstTareas is null)">
+            <Columns>
+                <Column T="TareaDeFlujo" Field="Id_Tarea" Title="#" />
+                <Column T="TareaDeFlujo" Field="Nombre" />
+                <Column T="TareaDeFlujo" Field="Estado_Tarea" />
+                <Column T="TareaDeFlujo" Field="Dias_Plazo" />
+                <Column Sortable="false" T="TareaDeFlujo" CellClass="d-flex justify-end">
+                    <CellTemplate>
+                        @*<_Semaforo sEstado="@context.Item.Estado_Tarea" />*@
+                        <MudIconButton Size="@Size.Small" Icon="@Icons.Material.Filled.Visibility" OnClick="@(e => Ver(context.Item))" />
+                    </CellTemplate>
+                </Column>
+            </Columns>
+        </MudDataGrid>
+    </MudCard>
+}
+
+
 
 @code {
     [CascadingParameter]
@@ -28,10 +61,14 @@
     [Parameter]
     public int id_Flujo { get; set; }
 
+    bool cargando = true;
+
     [Parameter]
     public List<FlujoDetalle> lstFlujos { get; set; } = new List<FlujoDetalle>();
 
     List<TareaDeFlujo> lstTareas { get; set; } = new List<TareaDeFlujo>();
+
+    IEnumerable<Estado> EnumEstados;
 
     public int id_Usuario { get; set; }
 
@@ -39,14 +76,18 @@
 
     protected override async Task OnInitializedAsync()
     {
+        EnumEstados = await EstadoServices.GetAll();
         var Auth = await authenticationState;
         id_Usuario = Convert.ToInt32(Auth.User.Claims.FirstOrDefault(x => x.Type == "Id").Value);
 
         //var result = await FlujosServices.GetDetalle(id_Usuario);
-        OrdenarTareas();
+        var result = await OrdenarTareas();
+
+        cargando = false;
     }
 
-    protected void OrdenarTareas(){
+    protected async Task<bool> OrdenarTareas(){
+        bool resultado = false;
         foreach (var flujo in lstFlujos.Where( x => x.Id_Flujo == id_Flujo))
         {
             foreach (var tarea in flujo.Tareas)
@@ -55,7 +96,9 @@
             }
         }
 
+        resultado = true;
 
+        return resultado;
     }
 
     private void Ver(object xTarea)
